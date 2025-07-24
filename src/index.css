@@ -1,11 +1,11 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&display=swap');
 
 .font-cormorant {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: "Cormorant Garamond", serif;
 }
-  
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -44,6 +44,10 @@
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-ring: var(--sidebar-ring);
+    --color-main: #525737;
+    --color-main-light: #7f8257;
+    --color-main-white: #f1e6d0;
+    --color-logo: #426042;
 }
 
 :root {
@@ -123,4 +127,3 @@
         @apply bg-background text-foreground;
     }
 }
-
