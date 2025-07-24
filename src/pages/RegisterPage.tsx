@@ -33,6 +33,8 @@ export default function RegisterPage() {
   const [user] = useAuthState(auth)
   const [searchParams] = useSearchParams()
 
+  const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null)
+
   const [formData, setFormData] = useState({
     username: "",
     firstName: "",
@@ -65,6 +67,10 @@ export default function RegisterPage() {
         phone: user.phoneNumber || "",
         profileImage: user.photoURL ? new File([], user.photoURL) : null,
       }))
+
+      if (user.photoURL) {
+        setProfileImagePreview(user.photoURL)
+      }
     }
   }, [searchParams, user])
 
@@ -80,6 +86,12 @@ export default function RegisterPage() {
     const file = e.target.files?.[0]
     if (file) {
       setFormData((prev) => ({ ...prev, profileImage: file }))
+
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        setProfileImagePreview(e.target?.result as string)
+      }
+      reader.readAsDataURL(file)
     }
   }
 
@@ -143,25 +155,29 @@ export default function RegisterPage() {
 
   if (step === 0) {
     return (
-      <div className="min-h-screen bg-[#8B9A6B] flex">
-        <div className="flex-1 flex flex-col justify-center px-12 text-white">
-          <div className="flex items-center gap-3 mb-12">
-            <img src="/logo-white.png" alt="LimbahKu" width={40} height={40} className="rounded-full" />
-            <span className="text-3xl font-cormorant font-semibold">LimbahKu</span>
+      <div className="min-h-screen bg-gradient-to-r from-[#525837] to-[#7E8257] flex flex-col lg:flex-row">
+        <div className="flex-1 flex flex-col justify-center px-6 lg:px-12 text-white py-8 lg:py-0">
+          <div className="absolute top-3 left-25 sm:top-20 sm:left-17">
+            <div className="flex items-center mb-8 lg:mb-12">
+              <img src="/logo-white.png" alt="LimbahKu" className="rounded-full w-16 sm:w-36" />
+              <span className="text-2xl lg:text-5xl font-cormorant font-semibold">LimbahKu</span>
+            </div>
           </div>
 
-          <div className="space-y-2">
-            <p className="text-xl">Join for free.</p>
-            <h1 className="text-4xl font-light">
+          <div className="space-y-2 absolute top-1/2 left-27">
+            <p className="text-lg lg:text-xl mb-4">Join for free.</p>
+            <h1 className="text-3xl lg:text-4xl font-cormorant">
               Turn Your <span className="font-cormorant italic">Waste</span>
             </h1>
-            <h1 className="text-4xl font-light">into Worth</h1>
+            <h1 className="text-3xl lg:text-4xl font-cormorant">into Worth</h1>
           </div>
         </div>
 
-        <div className="flex-1 flex items-center justify-center p-8">
-          <div className="bg-[#9BAA7F] bg-opacity-80 backdrop-blur-sm rounded-2xl p-8 w-full max-w-md">
-            <h2 className="text-2xl font-semibold text-white text-center mb-8">Create New Account</h2>
+        <div className="flex-1 flex items-center justify-center p-4 lg:p-8">
+          <div className="bg-[#7E8257] bg-opacity-90 backdrop-blur-sm rounded-2xl p-6 lg:p-8 w-full max-w-md">
+            <h2 className="text-xl lg:text-2xl font-semibold text-white text-center mb-6 lg:mb-8">
+              Create New Account
+            </h2>
 
             <div className="space-y-4">
               <Input
@@ -282,22 +298,26 @@ export default function RegisterPage() {
   if (step === 1) {
     return (
       <div className="min-h-screen bg-gray-50 lg:grid lg:grid-cols-2">
-        <div className="hidden lg:flex lg:flex-col lg:justify-center lg:px-12 bg-[#8B9A6B] text-white">
+        <div className="hidden lg:flex lg:flex-col lg:justify-center lg:px-12 bg-gradient-to-r from-[#525837] to-[#7E8257] text-white">
           <div className="max-w-md">
-            <div className="flex items-center gap-3 mb-8">
-              <img src="/logo-white.png" alt="LimbahKu" width={40} height={40} className="rounded-full" />
-              <span className="text-3xl font-cormorant font-semibold">LimbahKu</span>
+            <div className="absolute top-8 left-10">
+              <div className="flex items-center mb-8">
+                <img src="/logo-white.png" alt="LimbahKu" className="rounded-full w-36 " />
+                <span className="text-4xl font-cormorant font-semibold">LimbahKu</span>
+              </div>
             </div>
-            <h1 className="text-3xl font-light mb-2">{"Let's Set Up Your"}</h1>
-            <h1 className="text-3xl font-cormorant font-semibold italic mb-8">LimbahKu Account</h1>
+            <div className="absolute top-1/2 left-20">
+              <h1 className="text-4xl font-light mb-2">{"Let's Set Up Your"}</h1>
+              <h1 className="text-4xl font-cormorant font-semibold italic mb-8">&nbsp;LimbahKu Account</h1>
+            </div>
           </div>
         </div>
 
         <div className="flex flex-col justify-center px-4 py-12 sm:px-6 lg:px-8">
           <div className="mx-auto w-full max-w-lg">
             <div className="flex items-center justify-center mb-8 lg:hidden">
-              <div className="flex items-center gap-3 text-[#8B9A6B]">
-                <img src="/logo-white.png" alt="LimbahKu" width={32} height={32} className="rounded-full" />
+              <div className="flex items-center gap-3 text-[#525837]">
+                <img src="/logo-white.png" alt="LimbahKu" className="w-10 rounded-full bg-gradient-to-r from-[#525837] to-[#7E8257] " />
                 <span className="text-2xl font-cormorant font-semibold">LimbahKu</span>
               </div>
             </div>
@@ -313,35 +333,35 @@ export default function RegisterPage() {
               <div>
                 <p className="text-center mb-6 text-gray-700">What are you using LimbahKu for?</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <Card
-                    className={`cursor-pointer transition-all hover:shadow-lg border-2 ${
+                <Card
+                    className={`cursor-pointer transition-all hover:shadow-lg border-2 p-0 ${
                       formData.role === "seller"
-                        ? "border-[#8B9A6B] bg-[#8B9A6B]/5"
+                        ? "border-[#525837] bg-[#7E8257]/10"
                         : "border-gray-200 hover:border-gray-300"
                     }`}
                     onClick={() => handleRoleSelect("seller")}
                   >
-                    <CardContent className="p-6 text-center">
-                      <div className="w-16 h-16 mx-auto mb-4 bg-[#8B9A6B]/10 rounded-lg flex items-center justify-center">
-                        <div className="text-3xl">♻️</div>
+                    <CardContent className="p-6 text-center bg-[#7E8257] rounded-xl">
+                      <div className="w-full h-32 mx-auto mb-4 rounded-lg overflow-hidden">
+                        <img src="/waste_seller.png" alt="Sell Waste" className="w-full h-full object-contain " />
                       </div>
-                      <div className="bg-[#8B9A6B] text-white px-6 py-2 rounded-lg font-medium">SELL WASTE</div>
+                      <div className="bg-[#525837] text-white px-6 py-2 rounded-lg font-medium">SELL WASTE</div>{" "}
                     </CardContent>
                   </Card>
 
                   <Card
-                    className={`cursor-pointer transition-all hover:shadow-lg border-2 ${
+                    className={`cursor-pointer transition-all hover:shadow-lg border-2 p-0 ${
                       formData.role === "buyer"
-                        ? "border-[#8B9A6B] bg-[#8B9A6B]/5"
+                        ? "border-[#525837] bg-[#7E8257]/10"
                         : "border-gray-200 hover:border-gray-300"
                     }`}
                     onClick={() => handleRoleSelect("buyer")}
                   >
-                    <CardContent className="p-6 text-center">
-                      <div className="w-16 h-16 mx-auto mb-4 bg-[#8B9A6B]/10 rounded-lg flex items-center justify-center">
-                        <div className="text-3xl">🏭</div>
+                    <CardContent className="p-6 text-center bg-[#7E8257] rounded-xl">
+                      <div className="w-full h-32 mx-auto mb-4 rounded-lg overflow-hidden">
+                        <img src="/waste_buyer.png" alt="Buy Waste" className="w-full h-full object-contain" />
                       </div>
-                      <div className="bg-[#8B9A6B] text-white px-6 py-2 rounded-lg font-medium">BUY WASTE</div>
+                      <div className="bg-[#525837] text-white px-6 py-2 rounded-lg font-medium">BUY WASTE</div>{" "}
                     </CardContent>
                   </Card>
                 </div>
@@ -359,11 +379,21 @@ export default function RegisterPage() {
                     className="hidden"
                     id="profile-image"
                   />
-                  <label htmlFor="profile-image" className="cursor-pointer">
-                    <Upload className="w-8 h-8 mx-auto mb-2 text-gray-400" />
-                    <p className="text-sm text-gray-600">Click to upload a new image (Max 5mb)</p>
-                    {formData.profileImage && (
-                      <p className="text-xs text-green-600 mt-1">Selected: {formData.profileImage.name}</p>
+                    <label htmlFor="profile-image" className="cursor-pointer">
+                    {profileImagePreview ? (
+                      <div className="space-y-2">
+                        <img
+                          src={profileImagePreview || "/placeholder.svg"}
+                          alt="Profile Preview"
+                          className="w-20 h-20 mx-auto rounded-full object-cover border-2 border-gray-300"
+                        />
+                        <p className="text-sm text-green-600">Click to change image</p>
+                      </div>
+                    ) : (
+                      <>
+                        <Upload className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+                        <p className="text-sm text-gray-600">Click to upload a new image (Max 5mb)</p>
+                      </>
                     )}
                   </label>
                 </div>
@@ -385,26 +415,29 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 lg:grid lg:grid-cols-2">
-      <div className="hidden lg:flex lg:flex-col lg:justify-center lg:px-12 bg-[#8B9A6B] text-white">
-        <div className="max-w-md">
-          <div className="flex items-center gap-3 mb-8">
-            <img src="/logo-white.png" alt="LimbahKu" width={40} height={40} className="rounded-full" />
-            <span className="text-3xl font-cormorant font-semibold">LimbahKu</span>
-          </div>
-          <h1 className="text-3xl font-light mb-2">{"Let's Set Up Your"}</h1>
-          <h1 className="text-3xl font-cormorant font-semibold italic mb-8">LimbahKu Account</h1>
-        </div>
-      </div>
-
-      <div className="flex flex-col justify-center px-4 py-12 sm:px-6 lg:px-8">
-        <div className="mx-auto w-full max-w-lg">
-          {/* Mobile Logo */}
-          <div className="flex items-center justify-center mb-8 lg:hidden">
-            <div className="flex items-center gap-3 text-[#8B9A6B]">
-              <img src="/logo-white.png" alt="LimbahKu" width={32} height={32} className="rounded-full" />
-              <span className="text-2xl font-cormorant font-semibold">LimbahKu</span>
+        <div className="hidden lg:flex lg:flex-col lg:justify-center lg:px-12 bg-gradient-to-r from-[#525837] to-[#7E8257] text-white">
+          <div className="max-w-md">
+            <div className="absolute top-8 left-10">
+              <div className="flex items-center mb-8">
+                <img src="/logo-white.png" alt="LimbahKu" className="rounded-full w-36 " />
+                <span className="text-4xl font-cormorant font-semibold">LimbahKu</span>
+              </div>
+            </div>
+            <div className="absolute top-1/2 left-20">
+              <h1 className="text-4xl font-light mb-2">{"Let's Set Up Your"}</h1>
+              <h1 className="text-4xl font-cormorant font-semibold italic mb-8">&nbsp;LimbahKu Account</h1>
             </div>
           </div>
+        </div>
+
+        <div className="flex flex-col justify-center px-4 py-12 sm:px-6 lg:px-8">
+          <div className="mx-auto w-full max-w-lg">
+            <div className="flex items-center justify-center mb-8 lg:hidden">
+              <div className="flex items-center gap-3 text-[#525837]">
+                <img src="/logo-white.png" alt="LimbahKu" className="w-10 rounded-full bg-gradient-to-r from-[#525837] to-[#7E8257] " />
+                <span className="text-2xl font-cormorant font-semibold">LimbahKu</span>
+              </div>
+            </div>
 
           <div className="text-right mb-6">
             <span className="text-2xl font-semibold">Step 2</span>

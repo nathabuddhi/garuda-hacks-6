@@ -46,15 +46,15 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#8B9A6B] relative">
-      <div className="flex items-center justify-center min-h-screen p-4">
-        <div className="w-full max-w-md">
-          <div className="flex items-start mb-8">
-            <div className="flex items-center gap-3 text-white">
-               <img src="/logo-white.png" alt="LimbahKu" width={64} height={64} />
-              <span className="text-3xl font-cormorant font-semibold">LimbahKu</span>
-            </div>
-          </div>
+    <div className="min-h-screen bg-gradient-to-r from-[#525837] to-[#7E8257] relative">
+    <div className="flex items-center justify-center min-h-screen p-4">
+      <div className="w-full max-w-md">
+        <div className="absolute top-8 left-17">
+          <button className="flex items-center text-white cursor-pointer" onClick={() => window.location.href = "/"}>
+            <img src="/logo-white.png" alt="LimbahKu" className="w-16 sm:w-24" />
+            <span className="text-4xl font-cormorant font-semibold">LimbahKu</span>
+          </button>
+        </div>
 
           <div className="bg-white rounded-2xl p-8 shadow-lg">
             <h1 className="text-2xl font-semibold text-center mb-8 text-gray-800 font-cormorant">Log in to your account</h1>
