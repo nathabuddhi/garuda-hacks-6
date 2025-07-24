@@ -2,10 +2,14 @@ import { Timestamp } from "firebase/firestore";
 
 export interface User {
     uid: string;
-    name: string;
+    username: string;
     email: string;
     phone?: string;
     addresses?: Address[];
+    profile_image?: string;
+    first_name: string,
+    last_name: string,
+    birthdate?: Timestamp;
     role: "seller" | "buyer" | "admin";
     created_at: Timestamp;
 }

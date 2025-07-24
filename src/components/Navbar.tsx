@@ -10,12 +10,14 @@ export default function Navbar() {
                     <div className="flex gap-4">
                         <Button
                             variant="ghost"
-                            className="text-logo hover:text-main hover:bg-invisible">
+                            className="text-logo hover:text-main hover:bg-invisible"
+                            onClick={() => window.location.href = "/login"}>
                             Login
                         </Button>
                         <Button
                             variant="outline"
-                            className="text-logo border-logo bg-invisible hover:bg-invisible hover:text-main hover:border-main">
+                            className="text-logo border-logo bg-invisible hover:bg-invisible hover:text-main hover:border-main"
+                            onClick={() => window.location.href = "/register"}>
                             Register
                         </Button>
                     </div>
