@@ -68,6 +68,7 @@ import { uploadImage } from "@/lib/cloudinary"
   
       let profileImageUrl = ""
   
+      console.log("Registering user:", data)
       if (data.profileImage) {
         profileImageUrl = await uploadImage(data.profileImage)
       }
