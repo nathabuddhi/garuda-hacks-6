@@ -19,7 +19,7 @@ function App() {
                     />
                 </a>
             </div>
-            <p className="text-red-500 font-bold ml-20">Vite + React</p>
+            <p className="text-red-500 font-bold ml-20 font-cormorant">Vite + React</p>
             <div className="card">
                 <button onClick={() => setCount((count) => count + 1)} className="p-40">
                     count is {count}

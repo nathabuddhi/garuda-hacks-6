@@ -1,6 +1,11 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&display=swap');
 
+.font-cormorant {
+    font-family: 'Cormorant Garamond', serif;
+}
+  
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
