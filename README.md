@@ -1,1 +1,0 @@
-# Garuda Hacks by The Labbers
