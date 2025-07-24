@@ -1,21 +1,34 @@
-import { Outlet } from "react-router-dom";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Toaster } from "sonner";
-import Navbar from "@/components/Navbar";
+"use client"
+
+// UPDATED: Enhanced layout with scroll detection for navbar transparency
+import { Outlet } from "react-router-dom"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Toaster } from "sonner"
+import Navbar from "@/components/Navbar"
+import { useEffect, useState } from "react"
 
 export default function Layout() {
-    return (
-        <ScrollArea className="h-screen w-full overflow-auto overflow-x-hidden">
-            <Toaster richColors />
-            <div className="w-full border-b">
-                <div className="max-w-7xl mx-auto">
-                    <Navbar />
-                </div>
-            </div>
+  // ADDED: State to track scroll position for navbar transparency
+  const [isScrolled, setIsScrolled] = useState(false)
 
-            <main className="w-full">
-                <Outlet />
-            </main>
-        </ScrollArea>
-    );
+  // ADDED: Scroll listener to change navbar appearance
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50)
+    }
+
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
+
+  return (
+    <ScrollArea className="h-screen w-full overflow-auto overflow-x-hidden">
+      <Toaster richColors />
+      <Navbar isScrolled={isScrolled} />
+
+      <main className="w-full">
+        <Outlet />
+      </main>
+    </ScrollArea>
+  )
 }
