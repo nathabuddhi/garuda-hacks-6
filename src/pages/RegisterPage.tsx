@@ -158,10 +158,10 @@ export default function RegisterPage() {
       <div className="min-h-screen bg-gradient-to-r from-[#525837] to-[#7E8257] flex flex-col lg:flex-row">
         <div className="flex-1 flex flex-col justify-center px-6 lg:px-12 text-white py-8 lg:py-0">
           <div className="absolute top-3 left-25 sm:top-20 sm:left-17">
-            <div className="flex items-center mb-8 lg:mb-12">
+            <button className="flex items-center mb-8 lg:mb-12 cursor-pointer" onClick={() => window.location.href = "/"}>
               <img src="/logo-white.png" alt="LimbahKu" className="rounded-full w-16 sm:w-36" />
               <span className="text-2xl lg:text-5xl font-cormorant font-semibold">LimbahKu</span>
-            </div>
+            </button>
           </div>
 
           <div className="space-y-2 absolute top-1/2 left-27">
