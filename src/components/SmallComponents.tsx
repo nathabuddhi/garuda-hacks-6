@@ -32,7 +32,9 @@ export function LogoWithText({ white }: { white: boolean }) {
                 onClick={() => (window.location.href = "/")}
                 className="flex items-center pl-0.5 gap-0 justify-center hover:bg-invisible">
                 <img src="/logo-white.png" alt="Logo" className="h-16 w-16" />
-                <span className="text-xl font-bold text-white">LimbahKu</span>
+                <span className="text-2xl font-bold text-white font-cormorant">
+                    LimbahKu
+                </span>
             </Button>
         );
     }
@@ -43,7 +45,9 @@ export function LogoWithText({ white }: { white: boolean }) {
             onClick={() => (window.location.href = "/")}
             className="flex items-center pl-0.5 gap-0 justify-center hover:bg-invisible">
             <img src="/logo.png" alt="Logo" className="h-12 w-12" />
-            <span className="text-lg font-bold text-logo">LimbahKu</span>
+            <span className="text-2xl font-bold text-logo font-cormorant">
+                LimbahKu
+            </span>
         </Button>
     );
 }
