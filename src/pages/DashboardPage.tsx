@@ -4,20 +4,12 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, ArrowRight, Inbox } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useAuthUser } from "@/lib/utils";
 import { LoadingSpinner } from "@/components/SmallComponents";
 import { listenToTransactionsByUserId } from "@/handlers/transaction";
 import type { Transaction } from "@/types/transaction";
 import TransactionCard from "@/components/TransactionCard";
-
-interface InboxMessage {
-  id: string;
-  sender: string;
-  message: string;
-  time: string;
-  date: string;
-}
 
 export default function DashboardPage() {
   const { user, loading, userProfile } = useAuthUser({
@@ -31,56 +23,10 @@ export default function DashboardPage() {
     null
   );
 
-  const [inboxMessages] = useState<InboxMessage[]>([
-    {
-      id: "1",
-      sender: "Jane Doe",
-      message: "I'd like to request ...",
-      time: "21:07",
-      date: "Thurs",
-    },
-    {
-      id: "2",
-      sender: "Jane Doe",
-      message: "I'd like to request ...",
-      time: "21:07",
-      date: "Thurs",
-    },
-    {
-      id: "3",
-      sender: "Jane Doe",
-      message: "I'd like to request ...",
-      time: "21:07",
-      date: "Thurs",
-    },
-    {
-      id: "4",
-      sender: "Jane Doe",
-      message: "I'd like to request ...",
-      time: "21:07",
-      date: "Thurs",
-    },
-    {
-      id: "5",
-      sender: "Jane Doe",
-      message: "I'd like to request ...",
-      time: "21:07",
-      date: "Thurs",
-    },
-    {
-      id: "6",
-      sender: "Jane Doe",
-      message: "I'd like to request ...",
-      time: "21:07",
-      date: "Thurs",
-    },
-  ]);
-
   useEffect(() => {
     if (!loading && !user) {
       window.location.href = "/";
     }
-    setCurrentDate(new(Date))
   }, [user, loading]);
 
   useEffect(() => {
@@ -109,15 +55,6 @@ export default function DashboardPage() {
   }, [transactions]);
 
   const [userBalance] = useState(150000);
-
-  const deliverySteps = [
-    { id: 1, label: "Requested", completed: true },
-    { id: 2, label: "Confirmed", completed: false, current: true },
-    { id: 3, label: "Picked Up", completed: false },
-    { id: 4, label: "On the Way", completed: false },
-    { id: 5, label: "Complete", completed: false },
-  ];
-
   const formatDate = (date: Date) => {
     const days = [
       "SUNDAY",
