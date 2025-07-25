@@ -1,5 +1,4 @@
 // UPDATED: Complete landing page redesign with new colors, fonts, and responsive design
-import Footer from "@/components/Footer"
 import { LogoWithText } from "@/components/SmallComponents"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"

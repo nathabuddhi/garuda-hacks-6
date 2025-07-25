@@ -1,4 +1,3 @@
-import Footer from "@/components/Footer";
 import MainItemCard from "@/components/MainItemCard";
 import { getBaseItems } from "@/handlers/item";
 import { useAuthUser } from "@/lib/utils";
