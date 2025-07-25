@@ -25,6 +25,7 @@ export interface Transaction {
   completed_at?: Timestamp;
 
   item_id: string;
+  item_name: string;
   weight: number;
   curr_buyer_price: number;
   customer_price?: number;

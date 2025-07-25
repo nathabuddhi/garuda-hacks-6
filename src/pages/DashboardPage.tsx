@@ -7,14 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { CheckCircle, ArrowRight, Inbox } from "lucide-react";
 import { useAuthUser } from "@/lib/utils";
 import { LoadingSpinner } from "@/components/SmallComponents";
-
-interface WasteDelivery {
-  id: string;
-  item: string;
-  user: string;
-  status: "On Going" | "Completed" | "Pending";
-  date: string;
-}
+import { listenToTransactionsByUserId } from "@/handlers/transaction";
+import type { Transaction } from "@/types/transaction";
+import TransactionCard from "@/components/TransactionCard";
 
 interface InboxMessage {
   id: string;
@@ -29,37 +24,12 @@ export default function DashboardPage() {
     redirectIfNoUser: true,
   });
 
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [wasteDeliveries] = useState<WasteDelivery[]>([
-    {
-      id: "1",
-      item: "Used Palm Oil 30 Liter",
-      user: "@JaneDoe",
-      status: "On Going",
-      date: "2025-01-25",
-    },
-    {
-      id: "2",
-      item: "Used Palm Oil 30 Liter",
-      user: "@JaneDoe",
-      status: "On Going",
-      date: "2025-01-25",
-    },
-    {
-      id: "3",
-      item: "Used Palm Oil 30 Liter",
-      user: "@JaneDoe",
-      status: "On Going",
-      date: "2025-01-25",
-    },
-    {
-      id: "4",
-      item: "Used Palm Oil 30 Liter",
-      user: "@JaneDoe",
-      status: "On Going",
-      date: "2025-01-25",
-    },
-  ]);
+  const [currentDate] = useState(new Date());
+  const [wasteDeliveries, setWasteDeliveries] = useState<Transaction[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [latestDelivery, setLatestDelivery] = useState<Transaction | null>(
+    null
+  );
 
   const [inboxMessages] = useState<InboxMessage[]>([
     {
@@ -111,6 +81,31 @@ export default function DashboardPage() {
       window.location.href = "/";
     }
   }, [user, loading]);
+
+  useEffect(() => {
+    if (loading || !userProfile) return;
+
+    const unsubscribe = listenToTransactionsByUserId(
+      userProfile.uid,
+      userProfile?.role,
+      setTransactions
+    );
+
+    return () => unsubscribe();
+  }, [userProfile, loading]);
+
+  useEffect(() => {
+    setWasteDeliveries(transactions);
+    if (!transactions || transactions.length === 0) return;
+
+    const latest = transactions.reduce((latest, current) => {
+      const latestTime = latest.submitted_at?.toMillis?.() ?? 0;
+      const currentTime = current.submitted_at?.toMillis?.() ?? 0;
+      return currentTime > latestTime ? current : latest;
+    });
+
+    setLatestDelivery(latest);
+  }, [transactions]);
 
   const [userBalance] = useState(150000);
 
@@ -221,46 +216,12 @@ export default function DashboardPage() {
           <Card className="bg-[#7E8257] text-white">
             <CardContent className="p-4 sm:p-6">
               <h3 className="text-lg sm:text-xl font-semibold mb-6 text-center">
-                WASTE DELIVERY STATUS
+                LATEST WASTE TRANSACTION STATUS
               </h3>
 
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-2 mb-6">
-                {deliverySteps.map((step, index) => (
-                  <div
-                    key={step.id}
-                    className="flex items-center gap-2 sm:gap-4">
-                    <div className="flex flex-col items-center">
-                      <div
-                        className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center border-2 ${
-                          step.completed
-                            ? "bg-green-500 border-green-500"
-                            : step.current
-                            ? "bg-white border-white text-[#7E8257]"
-                            : "border-white/50"
-                        }`}>
-                        {step.completed ? (
-                          <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" />
-                        ) : (
-                          <span className="text-sm sm:text-base font-bold">
-                            {step.id}
-                          </span>
-                        )}
-                      </div>
-                      <span className="text-xs sm:text-sm mt-2 text-center">
-                        {step.label}
-                      </span>
-                    </div>
-
-                    {index < deliverySteps.length - 1 && (
-                      <div className="hidden sm:block w-8 lg:w-16 h-0.5 bg-white/30 mx-2 ml-10 mb-5" />
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              <p className="text-center text-sm opacity-90">
-                Current Status: Requesting Waste Delivery
-              </p>
+              {latestDelivery && (
+                <TransactionCard transaction={latestDelivery} />
+              )}
             </CardContent>
           </Card>
         </CardContent>
@@ -311,7 +272,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6">
             <div className="xl:col-span-2">
               <Card className="bg-white border-2 border-[#7E8257]/20">
                 <CardHeader className="pb-4">
@@ -320,20 +281,16 @@ export default function DashboardPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-3 gap-4 pb-3 border-b border-gray-200 text-sm font-medium text-gray-600">
+                  <div className="grid grid-cols-2 gap-4 pb-3 border-b border-gray-200 text-sm font-medium text-gray-600 justify-between">
                     <span>Items</span>
-                    <span className="text-center">User</span>
                     <span className="text-center">Status</span>
                   </div>
 
-                  <div className="space-y-3 mt-4">
+                  <div className="space-y-2 mt-4">
                     {wasteDeliveries.map((delivery) => (
-                      <div
-                        key={delivery.id}
-                        className="grid grid-cols-3 gap-4 py-2 text-sm">
-                        <span className="text-gray-800">{delivery.item}</span>
-                        <span className="text-center text-[#525837] font-medium">
-                          {delivery.user}
+                      <div className="grid grid-cols-2 gap-4 py-2 text-sm">
+                        <span className="text-gray-800 font-semibold">
+                          {delivery.item_name + " - " + delivery.weight + " kg"}
                         </span>
                         <div className="flex justify-center">
                           <Badge
@@ -345,49 +302,6 @@ export default function DashboardPage() {
                       </div>
                     ))}
                   </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className="xl:col-span-1">
-              <Card className="bg-white border-2 border-[#7E8257]/20">
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-lg text-[#525837] flex items-center gap-2">
-                    <Inbox className="w-5 h-5" />
-                    Inbox
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3 max-h-80 overflow-y-auto">
-                    {inboxMessages.map((message) => (
-                      <div
-                        key={message.id}
-                        className="flex justify-between items-start gap-3 py-2 border-b border-gray-100 last:border-b-0">
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium text-sm text-gray-800 truncate">
-                            {message.sender}
-                          </p>
-                          <p className="text-xs text-gray-600 truncate">
-                            {message.message}
-                          </p>
-                        </div>
-                        <div className="text-right flex-shrink-0">
-                          <p className="text-xs text-gray-500">
-                            {message.date}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {message.time}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <Button
-                    variant="outline"
-                    className="w-full mt-4 text-[#525837] border-[#7E8257] hover:bg-[#7E8257]/10 bg-transparent">
-                    View Request Details
-                  </Button>
                 </CardContent>
               </Card>
             </div>

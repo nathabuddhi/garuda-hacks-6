@@ -1,4 +1,4 @@
-import type { BuyerItem } from "@/types/item";
+import type { BuyerItem, Item } from "@/types/item";
 import type { User } from "@/types/user";
 import type { Response } from "@/types/util";
 import {
@@ -41,6 +41,16 @@ export const createNewTransaction = async (
       }
     );
 
+    const base_item = await getDoc(doc(db, "base_items", item_id)).then(
+      (doc) => {
+        if (doc.exists()) {
+          return doc.data() as Item;
+        } else {
+          return null;
+        }
+      }
+    );
+
     if (
       !curr_buyer_item ||
       curr_buyer_item.price <= 0 ||
@@ -65,6 +75,7 @@ export const createNewTransaction = async (
       seller_id: seller_id,
       is_donation: false,
       receiver_id: buyer_id,
+      item_name: base_item?.name || "",
       status: "pending_confirmation",
       pick_up_location: curr_seller_profile.addresses[0],
       submitted_at: Timestamp.now(),
