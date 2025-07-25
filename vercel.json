@@ -1,4 +1,3 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/" }],
-  "ignore": ["submission-files/"]
+  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
 }
