@@ -10,7 +10,7 @@ import { signOut } from "@/handlers/auth"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
 
 export default function Navbar() {
-  const { user, loading, userProfile } = useAuthUser()
+  const { user, loading } = useAuthUser()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [currPage, setCurrPage] = useState<string>("")
 
@@ -188,22 +188,6 @@ export default function Navbar() {
                   >
                     Marketplace
                   </Button>
-                  {userProfile?.role === "seller" && (
-                    <Button
-                      variant="ghost"
-                      className={`justify-start rounded-lg ${
-                        currPage === "/donate"
-                          ? "bg-[#7E8257] text-white hover:bg-[#525837] hover:text-white"
-                          : "text-[#525837] hover:text-[#7E8257] hover:bg-[#7E8257]/10"
-                      }`}
-                      onClick={() => {
-                        navigate("/donate")
-                        setIsMobileMenuOpen(false)
-                      }}
-                    >
-                      Donate
-                    </Button>
-                  )}
                   <Button
                     variant="ghost"
                     className={`justify-start rounded-lg ${
