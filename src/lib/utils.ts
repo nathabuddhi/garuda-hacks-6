@@ -16,6 +16,7 @@ export function useAuthUser(options?: { redirectIfNoUser?: boolean }) {
   const [user, loading] = useAuthState(auth);
   const [userProfile, setUserProfile] = useState<User | null>(null);
   const navigate = useNavigate();
+  console.log("options", options);
 
   useEffect(() => {
     if (!loading && user) {
@@ -28,4 +29,3 @@ export function useAuthUser(options?: { redirectIfNoUser?: boolean }) {
 
   return { user, loading, userProfile };
 }
-
