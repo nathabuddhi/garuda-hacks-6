@@ -122,8 +122,8 @@ To help you explore the full experience of both user roles, we’ve provided tes
 Watch a full walkthrough of the LimbahKu platform here:
 
 <p align="center">
-  <a href="https://www.youtube.com/watch?v=video_id" target="_blank">
-    <img src="https://img.youtube.com/vi/video_id/hqdefault.jpg" width="700">
+  <a href="https://www.youtube.com/watch?v=slkgktGB6Mg" target="_blank">
+    <img src="https://img.youtube.com/vi/slkgktGB6Mg/hqdefault.jpg" width="700">
   </a>
 </p>
 
