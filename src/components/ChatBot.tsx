@@ -96,7 +96,7 @@ export default function Chatbot() {
       console.log("Sending to Gemini API:", apiUrl)
 
       const contextPrompt = `You are LimbahKu's friendly assistant. LimbahKu is a platform in Indonesia where people can sell recyclable waste (paper, plastic, metal, electronics, cooking-oil, organic-waste, rubber, glass, textile.) to verified collectors.
-                            Your Name is Limbi.
+                            Your Name is Limbi. Answer in english please.
                             User question: ${message}`
 
       const requestBody = {
