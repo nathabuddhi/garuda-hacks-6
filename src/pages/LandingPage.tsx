@@ -7,10 +7,22 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
+import { useAuthUser } from "@/lib/utils"
 import { Recycle } from "lucide-react"
+import { useEffect } from "react"
 import { Link } from "react-router-dom"
 
 export default function LandingPage() {
+  const { user, loading } = useAuthUser();
+
+  useEffect(() => {
+    if (!loading && user) {
+      window.location.href = ("/dashboard"); // redirect if logged in
+    }
+  }, [user, loading]);
+
+  if (loading) return <p>Loading...</p>;
+
   return (
     <div className="bg-gray-50">
       {" "}

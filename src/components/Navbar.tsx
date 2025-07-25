@@ -81,18 +81,6 @@ export default function Navbar({ isScrolled }: NavbarProps) {
                     onClick={() => navigate("/marketplace")}>
                     Marketplace
                   </Button>
-                  {userProfile?.role === "seller" && (
-                    <Button
-                      variant="ghost"
-                      className={`text-main hover:text-main-light rounded-full  ${
-                        currPage == "/donate"
-                          ? "bg-main-light text-main-white hover:bg-main-light hover:text-main-white"
-                          : "hover:bg-main-light/70 hover:text-main-white"
-                      }`}
-                      onClick={() => navigate("/donate")}>
-                      Donate
-                    </Button>
-                  )}
                   <Button
                     variant="ghost"
                     className={`text-main hover:text-main-light rounded-full  ${

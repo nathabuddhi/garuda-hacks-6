@@ -7,6 +7,7 @@ import Layout from "@/components/Layout.tsx";
 import LoginPage from "@/pages/LoginPage.tsx";
 import RegisterPage from "@/pages/RegisterPage.tsx";
 import MarketplacePage from "@/pages/MarketplacePage";
+import DashboardPage from "./pages/DashboardPage";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -14,6 +15,7 @@ createRoot(document.getElementById("root")!).render(
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<LandingPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/marketplace" element={<MarketplacePage />} />
           <Route path="*" element={<Navigate to={"/"} replace />} />
         </Route>
