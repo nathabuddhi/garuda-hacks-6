@@ -151,17 +151,12 @@ export default function DashboardPage() {
             </Card>
           </div>
 
-          <Card className="bg-[#7E8257] text-white">
-            <CardContent className="p-4 sm:p-6">
-              <h3 className="text-lg sm:text-xl font-semibold mb-6 text-center">
-                LATEST WASTE TRANSACTION STATUS
-              </h3>
-
-              {latestDelivery && (
-                <TransactionCard transaction={latestDelivery} />
-              )}
-            </CardContent>
-          </Card>
+          <h3 className="text-lg sm:text-xl font-semibold mb-6 text-center">
+            LATEST WASTE TRANSACTION STATUS
+          </h3>
+          <div className="bg-main rounded-xl not-md:hidden">
+            {latestDelivery && <TransactionCard transaction={latestDelivery} />}
+          </div>
         </CardContent>
       </Card>
 
@@ -258,7 +253,7 @@ export default function DashboardPage() {
                 Take a look at your ongoing and completed transactions.
               </p>
               <Button
-                onClick={() => (window.location.href = "/transaction")}
+                onClick={() => (window.location.href = "/transactions")}
                 className="bg-[#525837] hover:bg-[#7E8257] text-white px-6 py-3 rounded-lg font-medium w-full sm:w-auto">
                 Browse Transaction
               </Button>

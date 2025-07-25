@@ -1,70 +1,87 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Eye, EyeOff, Mail } from "lucide-react"
-import {Link} from "react-router"
-import { signInWithGoogle, signInWithEmail } from "@/handlers/auth"
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Eye, EyeOff, Mail } from "lucide-react";
+import { Link } from "react-router";
+import { signInWithGoogle, signInWithEmail } from "@/handlers/auth";
+import { useAuthUser } from "@/lib/utils";
 
 export default function LoginPage() {
-  const [showPassword, setShowPassword] = useState(false)
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loadingPage, setLoading] = useState(false);
+  const { user, loading } = useAuthUser();
+
+  useEffect(() => {
+    if (user && !loading) {
+      window.location.href = "/dashboard";
+    }
+  }, [loading, user]);
 
   const handleGoogleSignIn = async () => {
     try {
-      setLoading(true)
-      const result = await signInWithGoogle()
+      setLoading(true);
+      const result = await signInWithGoogle();
 
       if (result.isNewUser) {
-        window.location.href = ("/register?step=0&google=true")
+        window.location.href = "/register?step=0&google=true";
       } else {
-        window.location.href = ("/dashboard")
+        window.location.href = "/dashboard";
       }
     } catch (error) {
-      console.error("Google sign in failed:", error)
+      console.error("Google sign in failed:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleEmailLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      setLoading(true)
-      await signInWithEmail(email, password)
-      window.location.href = ("/dashboard")
+      setLoading(true);
+      await signInWithEmail(email, password);
+      window.location.href = "/dashboard";
     } catch (error) {
-      console.error("Email login failed:", error)
+      console.error("Email login failed:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-[#525837] to-[#7E8257] relative">
-    <div className="flex items-center justify-center min-h-screen p-4">
-      <div className="w-full max-w-md">
-        <div className="absolute top-8 left-17">
-          <button className="flex items-center text-white cursor-pointer" onClick={() => window.location.href = "/"}>
-            <img src="/logo-white.png" alt="LimbahKu" className="w-16 sm:w-24" />
-            <span className="text-4xl font-cormorant font-semibold">LimbahKu</span>
-          </button>
-        </div>
+      <div className="flex items-center justify-center min-h-screen p-4">
+        <div className="w-full max-w-md">
+          <div className="absolute top-8 left-17">
+            <button
+              className="flex items-center text-white cursor-pointer"
+              onClick={() => (window.location.href = "/")}>
+              <img
+                src="/logo-white.png"
+                alt="LimbahKu"
+                className="w-16 sm:w-24"
+              />
+              <span className="text-4xl font-cormorant font-semibold">
+                LimbahKu
+              </span>
+            </button>
+          </div>
 
           <div className="bg-white rounded-2xl p-8 shadow-lg">
-            <h1 className="text-2xl font-semibold text-center mb-8 text-gray-800 font-cormorant">Log in to your account</h1>
+            <h1 className="text-2xl font-semibold text-center mb-8 text-gray-800 font-cormorant">
+              Log in to your account
+            </h1>
 
             <Button
               variant="outline"
               className="w-full h-12 mb-6 text-gray-700 border-gray-300 hover:bg-gray-50 bg-transparent"
               onClick={handleGoogleSignIn}
-              disabled={loading}
-            >
+              disabled={loadingPage}>
               <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                 <path
                   fill="#4285F4"
@@ -113,14 +130,19 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                  {showPassword ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
                 </button>
               </div>
 
               <div className="text-center">
-                <Link to="/register" className="text-gray-500 hover:underline text-sm">
+                <Link
+                  to="/register"
+                  className="text-gray-500 hover:underline text-sm">
                   {"Don't have an account? Register"}
                 </Link>
               </div>
@@ -128,14 +150,13 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 className="w-full h-12 bg-[#8B9A6B] hover:bg-[#7A8A5A] text-white"
-                disabled={loading}
-              >
-                {loading ? "Logging in..." : "Log in"}
+                disabled={loadingPage}>
+                {loadingPage ? "Logging in..." : "Log in"}
               </Button>
             </form>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

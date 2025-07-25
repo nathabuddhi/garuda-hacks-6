@@ -1,39 +1,42 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent } from "@/components/ui/card"
-import { Upload, Eye, EyeOff } from "lucide-react"
-import {Link, useSearchParams} from "react-router"
-import { registerUser, completeGoogleUserProfile } from "@/handlers/auth"
-import { auth } from "@/lib/firebase"
-import { useAuthState } from "react-firebase-hooks/auth"
-import GoogleMapSearch from "@/components/GoogleMap"
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
+import { Upload, Eye, EyeOff } from "lucide-react";
+import { Link, useSearchParams } from "react-router";
+import { registerUser, completeGoogleUserProfile } from "@/handlers/auth";
+import { auth } from "@/lib/firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
+import GoogleMapSearch from "@/components/GoogleMap";
+import { useAuthUser } from "@/lib/utils";
 
-type UserRole = "seller" | "buyer"
+type UserRole = "seller" | "buyer";
 
 interface LocationData {
-  address: string
-  city: string
-  province: string
-  postal_code: string
-  country: string
-  lat: number
-  lng: number
+  address: string;
+  city: string;
+  province: string;
+  postal_code: string;
+  country: string;
+  lat: number;
+  lng: number;
 }
 
 export default function RegisterPage() {
-  const [step, setStep] = useState(0)
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [user] = useAuthState(auth)
-  const [searchParams] = useSearchParams()
+  const [step, setStep] = useState(0);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loadingPage, setLoading] = useState(false);
+  const [userAuth] = useAuthState(auth);
+  const [searchParams] = useSearchParams();
 
-  const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null)
+  const [profileImagePreview, setProfileImagePreview] = useState<string | null>(
+    null
+  );
 
   const [formData, setFormData] = useState({
     username: "",
@@ -46,76 +49,90 @@ export default function RegisterPage() {
     confirmPassword: "",
     role: "" as UserRole,
     profileImage: null as File | null,
-  })
-
-  const [locationData, setLocationData] = useState<LocationData | null>(null)
+  });
+  const { user, loading } = useAuthUser();
 
   useEffect(() => {
-    const stepParam = searchParams.get("step")
-    const isGoogle = searchParams.get("google")
+    if (userAuth && !loading) {
+      window.location.href = "/dashboard";
+    }
+  }, [loading, user]);
+
+  const [locationData, setLocationData] = useState<LocationData | null>(null);
+
+  useEffect(() => {
+    const stepParam = searchParams.get("step");
+    const isGoogle = searchParams.get("google");
 
     if (stepParam) {
-      setStep(Number.parseInt(stepParam))
+      setStep(Number.parseInt(stepParam));
     }
 
-    if (isGoogle && user) {
+    if (isGoogle && userAuth) {
       setFormData((prev) => ({
         ...prev,
-        email: user.email || "",
-        firstName: user.displayName?.split(" ")[0] || "",
-        lastName: user.displayName?.split(" ").slice(1).join(" ") || "",
-        phone: user.phoneNumber || "",
-        profileImage: user.photoURL ? new File([], user.photoURL) : null,
-      }))
+        email: userAuth.email || "",
+        firstName: userAuth.displayName?.split(" ")[0] || "",
+        lastName: userAuth.displayName?.split(" ").slice(1).join(" ") || "",
+        phone: userAuth.phoneNumber || "",
+        profileImage: userAuth.photoURL
+          ? new File([], userAuth.photoURL)
+          : null,
+      }));
 
-      if (user.photoURL) {
-        setProfileImagePreview(user.photoURL)
+      if (userAuth.photoURL) {
+        setProfileImagePreview(userAuth.photoURL);
       }
     }
-  }, [searchParams, user])
+  }, [searchParams, userAuth]);
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
-  }
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleRoleSelect = (role: UserRole) => {
-    setFormData((prev) => ({ ...prev, role }))
-  }
+    setFormData((prev) => ({ ...prev, role }));
+  };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
+    const file = e.target.files?.[0];
     if (file) {
-      setFormData((prev) => ({ ...prev, profileImage: file }))
+      setFormData((prev) => ({ ...prev, profileImage: file }));
 
-      const reader = new FileReader()
+      const reader = new FileReader();
       reader.onload = (e) => {
-        setProfileImagePreview(e.target?.result as string)
-      }
-      reader.readAsDataURL(file)
+        setProfileImagePreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
     }
-  }
+  };
 
   const handleLocationSelect = (location: LocationData) => {
-    setLocationData(location) 
-  }
+    setLocationData(location);
+  };
 
   const handleInitialContinue = () => {
-    if (formData.username && formData.firstName && formData.lastName && formData.email) {
-      setStep(1)
+    if (
+      formData.username &&
+      formData.firstName &&
+      formData.lastName &&
+      formData.email
+    ) {
+      setStep(1);
     }
-  }
+  };
 
   const handleStep1Continue = () => {
     if (formData.role) {
-      setStep(2)
+      setStep(2);
     }
-  }
+  };
 
   const handleFinalRegister = async () => {
-    if (!locationData) return
+    if (!locationData) return;
 
     try {
-      setLoading(true)
+      setLoading(true);
 
       const address = {
         address_id: crypto.randomUUID(),
@@ -128,40 +145,48 @@ export default function RegisterPage() {
           lat: locationData.lat,
           long: locationData.lng,
         },
-      }
+      };
 
-      if (user && searchParams.get("google")) {
-        await completeGoogleUserProfile(user, {
+      if (userAuth && searchParams.get("google")) {
+        await completeGoogleUserProfile(userAuth, {
           username: formData.username,
           role: formData.role,
           profileImage: formData.profileImage,
           phone: formData.phone,
           address,
           birthdate: formData.birthdate,
-        })
+        });
       } else {
         await registerUser({
           ...formData,
           address,
-        })
+        });
       }
 
-      window.location.href = ("/dashboard")
+      window.location.href = "/dashboard";
     } catch (error) {
-      console.error("Registration failed:", error)
+      console.error("Registration failed:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   if (step === 0) {
     return (
       <div className="min-h-screen bg-gradient-to-r from-[#525837] to-[#7E8257] flex flex-col lg:flex-row">
         <div className="flex-1 flex flex-col justify-center px-6 lg:px-12 text-white py-8 lg:py-0">
           <div className="absolute top-3 left-25 sm:top-20 sm:left-17">
-            <button className="flex items-center mb-8 lg:mb-12 cursor-pointer" onClick={() => window.location.href = "/"}>
-              <img src="/logo-white.png" alt="LimbahKu" className="rounded-full w-16 sm:w-36" />
-              <span className="text-2xl lg:text-5xl font-cormorant font-semibold">LimbahKu</span>
+            <button
+              className="flex items-center mb-8 lg:mb-12 cursor-pointer"
+              onClick={() => (window.location.href = "/")}>
+              <img
+                src="/logo-white.png"
+                alt="LimbahKu"
+                className="rounded-full w-16 sm:w-36"
+              />
+              <span className="text-2xl lg:text-5xl font-cormorant font-semibold">
+                LimbahKu
+              </span>
             </button>
           </div>
 
@@ -193,18 +218,26 @@ export default function RegisterPage() {
                 <Input
                   placeholder="First Name"
                   value={formData.firstName}
-                  onChange={(e) => handleInputChange("firstName", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("firstName", e.target.value)
+                  }
                   className="h-12 bg-white/90 border-0 placeholder:text-gray-500"
                   required
-                  disabled={!!user?.displayName && !!searchParams.get("google")}
+                  disabled={
+                    !!userAuth?.displayName && !!searchParams.get("google")
+                  }
                 />
                 <Input
                   placeholder="Last Name"
                   value={formData.lastName}
-                  onChange={(e) => handleInputChange("lastName", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("lastName", e.target.value)
+                  }
                   className="h-12 bg-white/90 border-0 placeholder:text-gray-500"
                   required
-                  disabled={!!user?.displayName && !!searchParams.get("google")}
+                  disabled={
+                    !!userAuth?.displayName && !!searchParams.get("google")
+                  }
                 />
               </div>
 
@@ -224,7 +257,7 @@ export default function RegisterPage() {
                 onChange={(e) => handleInputChange("email", e.target.value)}
                 className="h-12 bg-white/90 border-0 placeholder:text-gray-500"
                 required
-                disabled={!!user?.email && !!searchParams.get("google")}
+                disabled={!!userAuth?.email && !!searchParams.get("google")}
               />
 
               <Input
@@ -234,26 +267,33 @@ export default function RegisterPage() {
                 onChange={(e) => handleInputChange("phone", e.target.value)}
                 className="h-12 bg-white/90 border-0 placeholder:text-gray-500"
                 required
-                disabled={!!user?.phoneNumber && !!searchParams.get("google")}
+                disabled={
+                  !!userAuth?.phoneNumber && !!searchParams.get("google")
+                }
               />
 
-              {(!searchParams.get("google")) && (
+              {!searchParams.get("google") && (
                 <>
                   <div className="relative">
                     <Input
                       type={showPassword ? "text" : "password"}
                       placeholder="Password"
                       value={formData.password}
-                      onChange={(e) => handleInputChange("password", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("password", e.target.value)
+                      }
                       className="h-12 bg-white/90 border-0 placeholder:text-gray-500 pr-10"
                       required
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-                    >
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                      {showPassword ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
                     </button>
                   </div>
 
@@ -262,38 +302,46 @@ export default function RegisterPage() {
                       type={showConfirmPassword ? "text" : "password"}
                       placeholder="Confirm Password"
                       value={formData.confirmPassword}
-                      onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("confirmPassword", e.target.value)
+                      }
                       className="h-12 bg-white/90 border-0 placeholder:text-gray-500 pr-10"
                       required
                     />
                     <button
                       type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-                    >
-                      {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                      {showConfirmPassword ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
                     </button>
                   </div>
                 </>
               )}
 
               <div className="text-center">
-                <Link to="/login" className="text-white/80 hover:text-white text-sm italic">
+                <Link
+                  to="/login"
+                  className="text-white/80 hover:text-white text-sm italic">
                   Already have an account? Login
                 </Link>
               </div>
 
               <Button
                 onClick={handleInitialContinue}
-                className="w-full h-12 bg-[#D4B896] hover:bg-[#C4A886] text-gray-800 font-medium"
-              >
+                className="w-full h-12 bg-[#D4B896] hover:bg-[#C4A886] text-gray-800 font-medium">
                 Continue
               </Button>
             </div>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   if (step === 1) {
@@ -303,13 +351,23 @@ export default function RegisterPage() {
           <div className="max-w-md">
             <div className="absolute top-8 left-10">
               <div className="flex items-center mb-8">
-                <img src="/logo-white.png" alt="LimbahKu" className="rounded-full w-36 " />
-                <span className="text-4xl font-cormorant font-semibold">LimbahKu</span>
+                <img
+                  src="/logo-white.png"
+                  alt="LimbahKu"
+                  className="rounded-full w-36 "
+                />
+                <span className="text-4xl font-cormorant font-semibold">
+                  LimbahKu
+                </span>
               </div>
             </div>
             <div className="absolute top-1/2 left-20">
-              <h1 className="text-4xl font-light mb-2">{"Let's Set Up Your"}</h1>
-              <h1 className="text-4xl font-cormorant font-semibold italic mb-8">&nbsp;LimbahKu Account</h1>
+              <h1 className="text-4xl font-light mb-2">
+                {"Let's Set Up Your"}
+              </h1>
+              <h1 className="text-4xl font-cormorant font-semibold italic mb-8">
+                &nbsp;LimbahKu Account
+              </h1>
             </div>
           </div>
         </div>
@@ -318,8 +376,14 @@ export default function RegisterPage() {
           <div className="mx-auto w-full max-w-lg">
             <div className="flex items-center justify-center mb-8 lg:hidden">
               <div className="flex items-center gap-3 text-[#525837]">
-                <img src="/logo-white.png" alt="LimbahKu" className="w-10 rounded-full bg-gradient-to-r from-[#525837] to-[#7E8257] " />
-                <span className="text-2xl font-cormorant font-semibold">LimbahKu</span>
+                <img
+                  src="/logo-white.png"
+                  alt="LimbahKu"
+                  className="w-10 rounded-full bg-gradient-to-r from-[#525837] to-[#7E8257] "
+                />
+                <span className="text-2xl font-cormorant font-semibold">
+                  LimbahKu
+                </span>
               </div>
             </div>
 
@@ -328,25 +392,34 @@ export default function RegisterPage() {
               <span className="text-gray-400">/2</span>
             </div>
 
-            <h2 className="text-2xl font-semibold text-center mb-8">Tell Us About Yourself</h2>
+            <h2 className="text-2xl font-semibold text-center mb-8">
+              Tell Us About Yourself
+            </h2>
 
             <div className="space-y-6">
               <div>
-                <p className="text-center mb-6 text-gray-700">What are you using LimbahKu for?</p>
+                <p className="text-center mb-6 text-gray-700">
+                  What are you using LimbahKu for?
+                </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <Card
+                  <Card
                     className={`cursor-pointer transition-all hover:shadow-lg border-2 p-0 ${
                       formData.role === "seller"
                         ? "border-[#525837] bg-[#7E8257]/10"
                         : "border-gray-200 hover:border-gray-300"
                     }`}
-                    onClick={() => handleRoleSelect("seller")}
-                  >
+                    onClick={() => handleRoleSelect("seller")}>
                     <CardContent className="p-6 text-center bg-[#7E8257] rounded-xl">
                       <div className="w-full h-32 mx-auto mb-4 rounded-lg overflow-hidden">
-                        <img src="/waste_seller.png" alt="Sell Waste" className="w-full h-full object-contain " />
+                        <img
+                          src="/waste_seller.png"
+                          alt="Sell Waste"
+                          className="w-full h-full object-contain "
+                        />
                       </div>
-                      <div className="bg-[#525837] text-white px-6 py-2 rounded-lg font-medium">SELL WASTE</div>{" "}
+                      <div className="bg-[#525837] text-white px-6 py-2 rounded-lg font-medium">
+                        SELL WASTE
+                      </div>{" "}
                     </CardContent>
                   </Card>
 
@@ -356,13 +429,18 @@ export default function RegisterPage() {
                         ? "border-[#525837] bg-[#7E8257]/10"
                         : "border-gray-200 hover:border-gray-300"
                     }`}
-                    onClick={() => handleRoleSelect("buyer")}
-                  >
+                    onClick={() => handleRoleSelect("buyer")}>
                     <CardContent className="p-6 text-center bg-[#7E8257] rounded-xl">
                       <div className="w-full h-32 mx-auto mb-4 rounded-lg overflow-hidden">
-                        <img src="/waste_buyer.png" alt="Buy Waste" className="w-full h-full object-contain" />
+                        <img
+                          src="/waste_buyer.png"
+                          alt="Buy Waste"
+                          className="w-full h-full object-contain"
+                        />
                       </div>
-                      <div className="bg-[#525837] text-white px-6 py-2 rounded-lg font-medium">BUY WASTE</div>{" "}
+                      <div className="bg-[#525837] text-white px-6 py-2 rounded-lg font-medium">
+                        BUY WASTE
+                      </div>{" "}
                     </CardContent>
                   </Card>
                 </div>
@@ -370,7 +448,8 @@ export default function RegisterPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Profile Image <span className="text-gray-400">(Optional)</span>
+                  Profile Image{" "}
+                  <span className="text-gray-400">(Optional)</span>
                 </label>
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors">
                   <input
@@ -380,7 +459,7 @@ export default function RegisterPage() {
                     className="hidden"
                     id="profile-image"
                   />
-                    <label htmlFor="profile-image" className="cursor-pointer">
+                  <label htmlFor="profile-image" className="cursor-pointer">
                     {profileImagePreview ? (
                       <div className="space-y-2">
                         <img
@@ -388,12 +467,16 @@ export default function RegisterPage() {
                           alt="Profile Preview"
                           className="w-20 h-20 mx-auto rounded-full object-cover border-2 border-gray-300"
                         />
-                        <p className="text-sm text-green-600">Click to change image</p>
+                        <p className="text-sm text-green-600">
+                          Click to change image
+                        </p>
                       </div>
                     ) : (
                       <>
                         <Upload className="w-8 h-8 mx-auto mb-2 text-gray-400" />
-                        <p className="text-sm text-gray-600">Click to upload a new image (Max 5mb)</p>
+                        <p className="text-sm text-gray-600">
+                          Click to upload a new image (Max 5mb)
+                        </p>
                       </>
                     )}
                   </label>
@@ -403,56 +486,73 @@ export default function RegisterPage() {
               <Button
                 onClick={handleStep1Continue}
                 disabled={!formData.role}
-                className="w-full h-12 bg-[#8B9A6B] hover:bg-[#7A8A5A] text-white"
-              >
+                className="w-full h-12 bg-[#8B9A6B] hover:bg-[#7A8A5A] text-white">
                 Continue
               </Button>
             </div>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
     <div className="min-h-screen bg-gray-50 lg:grid lg:grid-cols-2">
-        <div className="hidden lg:flex lg:flex-col lg:justify-center lg:px-12 bg-gradient-to-r from-[#525837] to-[#7E8257] text-white">
-          <div className="max-w-md">
-            <div className="absolute top-8 left-10">
-              <div className="flex items-center mb-8">
-                <img src="/logo-white.png" alt="LimbahKu" className="rounded-full w-36 " />
-                <span className="text-4xl font-cormorant font-semibold">LimbahKu</span>
-              </div>
-            </div>
-            <div className="absolute top-1/2 left-20">
-              <h1 className="text-4xl font-light mb-2">{"Let's Set Up Your"}</h1>
-              <h1 className="text-4xl font-cormorant font-semibold italic mb-8">&nbsp;LimbahKu Account</h1>
+      <div className="hidden lg:flex lg:flex-col lg:justify-center lg:px-12 bg-gradient-to-r from-[#525837] to-[#7E8257] text-white">
+        <div className="max-w-md">
+          <div className="absolute top-8 left-10">
+            <div className="flex items-center mb-8">
+              <img
+                src="/logo-white.png"
+                alt="LimbahKu"
+                className="rounded-full w-36 "
+              />
+              <span className="text-4xl font-cormorant font-semibold">
+                LimbahKu
+              </span>
             </div>
           </div>
+          <div className="absolute top-1/2 left-20">
+            <h1 className="text-4xl font-light mb-2">{"Let's Set Up Your"}</h1>
+            <h1 className="text-4xl font-cormorant font-semibold italic mb-8">
+              &nbsp;LimbahKu Account
+            </h1>
+          </div>
         </div>
+      </div>
 
-        <div className="flex flex-col justify-center px-4 py-12 sm:px-6 lg:px-8">
-          <div className="mx-auto w-full max-w-lg">
-            <div className="flex items-center justify-center mb-8 lg:hidden">
-              <div className="flex items-center gap-3 text-[#525837]">
-                <img src="/logo-white.png" alt="LimbahKu" className="w-10 rounded-full bg-gradient-to-r from-[#525837] to-[#7E8257] " />
-                <span className="text-2xl font-cormorant font-semibold">LimbahKu</span>
-              </div>
+      <div className="flex flex-col justify-center px-4 py-12 sm:px-6 lg:px-8">
+        <div className="mx-auto w-full max-w-lg">
+          <div className="flex items-center justify-center mb-8 lg:hidden">
+            <div className="flex items-center gap-3 text-[#525837]">
+              <img
+                src="/logo-white.png"
+                alt="LimbahKu"
+                className="w-10 rounded-full bg-gradient-to-r from-[#525837] to-[#7E8257] "
+              />
+              <span className="text-2xl font-cormorant font-semibold">
+                LimbahKu
+              </span>
             </div>
+          </div>
 
           <div className="text-right mb-6">
             <span className="text-2xl font-semibold">Step 2</span>
             <span className="text-gray-400">/2</span>
           </div>
 
-          <h2 className="text-2xl font-semibold text-center mb-8">Tell Us Your Location</h2>
+          <h2 className="text-2xl font-semibold text-center mb-8">
+            Tell Us Your Location
+          </h2>
 
           <div className="space-y-6">
             <GoogleMapSearch onLocationSelect={handleLocationSelect} />
 
             {locationData && (
               <div className="space-y-4 p-4 bg-gray-50 rounded-lg border">
-                <h3 className="font-medium text-gray-900">Selected Location:</h3>
+                <h3 className="font-medium text-gray-900">
+                  Selected Location:
+                </h3>
                 <div className="text-sm text-gray-600 space-y-1">
                   <p>
                     <strong>Address:</strong> {locationData.address}
@@ -471,20 +571,23 @@ export default function RegisterPage() {
             )}
 
             <div className="flex gap-4">
-              <Button variant="outline" onClick={() => setStep(1)} className="flex-1 h-12" disabled={loading}>
+              <Button
+                variant="outline"
+                onClick={() => setStep(1)}
+                className="flex-1 h-12"
+                disabled={loadingPage}>
                 Back
               </Button>
               <Button
                 onClick={handleFinalRegister}
-                disabled={!locationData || loading}
-                className="flex-1 h-12 bg-[#8B9A6B] hover:bg-[#7A8A5A] text-white"
-              >
-                {loading ? "Creating Account..." : "Register"}
+                disabled={!locationData || loadingPage}
+                className="flex-1 h-12 bg-[#8B9A6B] hover:bg-[#7A8A5A] text-white">
+                {loadingPage ? "Creating Account..." : "Register"}
               </Button>
             </div>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
