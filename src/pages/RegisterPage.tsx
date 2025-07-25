@@ -13,6 +13,7 @@ import { auth } from "@/lib/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import GoogleMapSearch from "@/components/GoogleMap";
 import { useAuthUser } from "@/lib/utils";
+import { toast, Toaster } from "sonner";
 
 type UserRole = "seller" | "buyer";
 
@@ -165,7 +166,17 @@ export default function RegisterPage() {
 
       window.location.href = "/dashboard";
     } catch (error) {
-      console.error("Registration failed:", error);
+      if (error instanceof Error) {
+        if (error.message.includes("auth/password-does-not-meet-requirements"))
+          toast.error(
+            "Password must be at least 8 characters, include a special character, a number, an uppercase letter, and a lowercase letter."
+          );
+        else if (error.message.includes("auth/email-already-in-use"))
+          toast.error("Email already in use.");
+        else toast.error(error.message);
+      } else {
+        toast.error("Register failed. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -483,12 +494,21 @@ export default function RegisterPage() {
                 </div>
               </div>
 
-              <Button
-                onClick={handleStep1Continue}
-                disabled={!formData.role}
-                className="w-full h-12 bg-[#8B9A6B] hover:bg-[#7A8A5A] text-white">
-                Continue
-              </Button>
+              <div className="flex justify-between gap-2">
+                <Button
+                  onClick={() => setStep(0)}
+                  disabled={!formData.role}
+                  variant={"outline"}
+                  className="w-1/2 h-12">
+                  Back
+                </Button>
+                <Button
+                  onClick={handleStep1Continue}
+                  disabled={!formData.role}
+                  className="w-1/2 h-12 bg-[#8B9A6B] hover:bg-[#7A8A5A] text-white">
+                  Continue
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -500,6 +520,7 @@ export default function RegisterPage() {
     <div className="min-h-screen bg-gray-50 lg:grid lg:grid-cols-2">
       <div className="hidden lg:flex lg:flex-col lg:justify-center lg:px-12 bg-gradient-to-r from-[#525837] to-[#7E8257] text-white">
         <div className="max-w-md">
+          <Toaster richColors />
           <div className="absolute top-8 left-10">
             <div className="flex items-center mb-8">
               <img

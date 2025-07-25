@@ -9,6 +9,7 @@ import { Eye, EyeOff, Mail } from "lucide-react";
 import { Link } from "react-router";
 import { signInWithGoogle, signInWithEmail } from "@/handlers/auth";
 import { useAuthUser } from "@/lib/utils";
+import { toast, Toaster } from "sonner";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -47,7 +48,13 @@ export default function LoginPage() {
       await signInWithEmail(email, password);
       window.location.href = "/dashboard";
     } catch (error) {
-      console.error("Email login failed:", error);
+      if (error instanceof Error) {
+        if (error.message.includes("auth/invalid-credential"))
+          toast.error("Invalid Credentials.");
+        else toast.error(error.message);
+      } else {
+        toast.error("Login failed. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -55,6 +62,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-[#525837] to-[#7E8257] relative">
+      <Toaster richColors />
       <div className="flex items-center justify-center min-h-screen p-4">
         <div className="w-full max-w-md">
           <div className="absolute top-8 left-17">
