@@ -1,4 +1,3 @@
-import Footer from "@/components/Footer";
 import MainItemCard from "@/components/MainItemCard";
 import { getBaseItems } from "@/handlers/item";
 import { useAuthUser } from "@/lib/utils";
@@ -39,7 +38,6 @@ export default function MarketplacePage() {
               <MainItemCard key={i.id} item={i} />
             ))}
           </div>
-          <Footer />
         </div>
       </>
     );
