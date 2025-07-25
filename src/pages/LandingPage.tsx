@@ -65,12 +65,6 @@ export default function LandingPage() {
                 Why LimbahKu
               </TabsTrigger>
               <TabsTrigger
-                value="testimonials"
-                className="cursor-pointer text-white text-sm sm:text-base font-medium py-3 px-2 sm:px-4 data-[state=active]:bg-[#F1E6D0] data-[state=active]:text-[#525837] transition-colors duration-200"
-              >
-                What They Say
-              </TabsTrigger>
-              <TabsTrigger
                 value="contact"
                 className="cursor-pointer text-white text-sm sm:text-base font-medium py-3 px-2 sm:px-4 data-[state=active]:bg-[#F1E6D0] data-[state=active]:text-[#525837] transition-colors duration-200"
               >
@@ -139,32 +133,6 @@ export default function LandingPage() {
                       appliance, every contribution matters. With LimbahKu, your everyday actions become part of a
                       larger movement toward a cleaner future.
                     </p>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="testimonials" className="mt-8">
-              <Card className="bg-[#7E8257] border border-white/20 text-white shadow-2xl rounded-xl overflow-hidden">
-                <CardContent className="p-6 sm:p-8 lg:p-10 space-y-6 text-white/90 leading-relaxed font-sans">
-                  <h2 className="text-3xl sm:text-4xl font-bold tracking-tight font-cormorant text-center">
-                    What They Say
-                  </h2>
-                  <div className="grid md:grid-cols-2 gap-6 sm:gap-8">
-                    <div className="bg-white/10 p-6 rounded-lg">
-                      <p className="italic mb-4">
-                        "LimbahKu has transformed how our family thinks about waste. It's so easy to use and we're
-                        making a real difference!"
-                      </p>
-                      <p className="font-semibold">- Sarah, Jakarta</p>
-                    </div>
-                    <div className="bg-white/10 p-6 rounded-lg">
-                      <p className="italic mb-4">
-                        "As a waste collector, LimbahKu has helped me connect with more households and grow my business
-                        sustainably."
-                      </p>
-                      <p className="font-semibold">- Ahmad, Bandung</p>
-                    </div>
                   </div>
                 </CardContent>
               </Card>
