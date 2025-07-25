@@ -110,6 +110,7 @@ export default function DashboardPage() {
     if (!loading && !user) {
       window.location.href = "/";
     }
+    setCurrentDate(new(Date))
   }, [user, loading]);
 
   const [userBalance] = useState(150000);
