@@ -223,6 +223,12 @@ export default function Navbar({ isScrolled }: NavbarProps) {
                       onClick={() => navigate("/profile")}>
                       Profile
                     </Button>
+                    <Button
+                      variant={"destructive"}
+                      className="bg-red-800 hover:bg-red-900"
+                      onClick={handleSignOut}>
+                      Log Out
+                    </Button>
                   </>
                 )}
               </div>
