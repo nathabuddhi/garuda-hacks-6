@@ -31,7 +31,6 @@ This initiative promotes **sustainability**, **recycling awareness**, and **econ
 - Dashboard with transaction history and item status
 - Cloudinary-powered image storage and optimization
 - Seamless pickup and delivery workflow
-- Supports both **for-profit reselling** and **non-profit donations** (e.g., learning books to orphanages)
 
 ---
 
@@ -87,3 +86,4 @@ Built with passion and purpose for Garuda Hacks 6.0 ✈️
 
 ##  🤖 Attribution
 Let's be real, this project would not have been possible within 30 hours without any help from AI. Large language models including *ChatGPT*, *Gemini*, *v0*, and more were used to help with styling, debugging, idea refining, and more.
+
