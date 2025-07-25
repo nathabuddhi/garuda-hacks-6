@@ -13,9 +13,17 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 
 export default function ItemDetailPage() {
-  const { loading } = useAuthUser({
+  const { loading, user } = useAuthUser({
     redirectIfNoUser: true,
   });
+
+  useEffect(() => {
+    if (!loading && !user) {
+      window.location.href = ("/");
+    }
+  }, [user, loading]);
+
+
   const [item, setItem] = useState<Item | null>(null);
   const navigate = useNavigate();
   const params = useParams();

@@ -38,6 +38,12 @@ export default function ProfilePage() {
     redirectIfNoUser: true,
   })
 
+  useEffect(() => {
+    if (!loading && !user) {
+      window.location.href = ("/");
+    }
+  }, [user, loading]);
+
   const [formData, setFormData] = useState<ProfileFormData>({
     firstName: "",
     lastName: "",

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -27,6 +27,12 @@ export default function DashboardPage() {
   const { user, loading, userProfile } = useAuthUser({
     redirectIfNoUser: true,
   })
+
+  useEffect(() => {
+    if (!loading && !user) {
+      window.location.href = ("/");
+    }
+  }, [user, loading]);
 
   const [currentDate, setCurrentDate] = useState(new Date())
   const [wasteDeliveries] = useState<WasteDelivery[]>([

@@ -5,9 +5,15 @@ import type { Item } from "@/types/item";
 import { useEffect, useState } from "react";
 
 export default function MarketplacePage() {
-  const { loading, userProfile } = useAuthUser({
+  const { loading, user, userProfile } = useAuthUser({
     redirectIfNoUser: true,
   });
+
+  useEffect(() => {
+    if (!loading && !user) {
+      window.location.href = ("/");
+    }
+  }, [user, loading]);
 
   const [items, setItems] = useState<Item[]>([]);
 
