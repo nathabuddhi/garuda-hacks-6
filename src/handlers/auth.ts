@@ -5,7 +5,7 @@ import {
   signOut as firebaseSignOut,
   type User as FirebaseUser,
 } from "firebase/auth";
-import { doc, setDoc, getDoc, Timestamp } from "firebase/firestore";
+import { doc, setDoc, getDoc, Timestamp, updateDoc } from "firebase/firestore";
 import { auth, db, googleProvider } from "@/lib/firebase";
 import type { User, Address } from "../types/user";
 import { uploadImage } from "@/lib/cloudinary";
@@ -108,6 +108,7 @@ export const completeGoogleUserProfile = async (
     profileImage?: File | null;
     address?: Address;
     phone?: string;
+    birthdate: string;
   }
 ) => {
   try {
@@ -123,6 +124,7 @@ export const completeGoogleUserProfile = async (
       email: user.email || "",
       phone: user.phoneNumber || additionalData.phone || "",
       addresses: additionalData.address ? [additionalData.address] : [],
+      birthdate: Timestamp.fromDate(new Date(additionalData.birthdate)),
       role: additionalData.role,
       created_at: Timestamp.now(),
       profile_image: profileImageUrl || user.photoURL || "",
@@ -167,3 +169,60 @@ export const handleSignOut = () => {
     throw error;
   }
 };
+
+export interface ProfileUpdateData {
+  firstName: string
+  lastName: string
+  username: string
+  phone: string
+  email: string
+  address: string
+  profileImage?: File | null
+}
+
+export const updateUserProfile = async (userId: string, updateData: ProfileUpdateData) => {
+  try {
+    let profileImageUrl = ""
+
+    if (updateData.profileImage) {
+      profileImageUrl = await uploadImage(updateData.profileImage)
+    }
+
+    const updateObject: Partial<User> = {
+      username: updateData.username,
+      first_name: updateData.firstName,
+      last_name: updateData.lastName,
+      phone: updateData.phone,
+      email: updateData.email,
+    }
+
+    if (profileImageUrl) {
+      updateObject.profile_image = profileImageUrl
+    }
+
+    if (updateData.address) {
+      const userDoc = await getDoc(doc(db, "users", userId))
+      const currentUserData = userDoc.data() as User
+
+      const updatedAddress: Address = {
+        address_id: currentUserData.addresses?.[0]?.address_id || crypto.randomUUID(),
+        address: updateData.address,
+        city: currentUserData.addresses?.[0]?.city || "",
+        province: currentUserData.addresses?.[0]?.province || "",
+        postal_code: currentUserData.addresses?.[0]?.postal_code || "",
+        country: currentUserData.addresses?.[0]?.country || "Indonesia",
+        geo_location: currentUserData.addresses?.[0]?.geo_location || { lat: 0, long: 0 },
+      }
+
+      updateObject.addresses = [updatedAddress]
+    }
+
+    await updateDoc(doc(db, "users", userId), updateObject)
+
+    console.log("Profile updated successfully")
+    return true
+  } catch (error) {
+    console.error("Profile update error:", error)
+    throw error
+  }
+}

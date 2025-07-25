@@ -137,6 +137,7 @@ export default function RegisterPage() {
           profileImage: formData.profileImage,
           phone: formData.phone,
           address,
+          birthdate: formData.birthdate,
         })
       } else {
         await registerUser({
@@ -383,7 +384,7 @@ export default function RegisterPage() {
                     {profileImagePreview ? (
                       <div className="space-y-2">
                         <img
-                          src={profileImagePreview || "/placeholder.svg"}
+                          src={profileImagePreview || "/Limbi.png"}
                           alt="Profile Preview"
                           className="w-20 h-20 mx-auto rounded-full object-cover border-2 border-gray-300"
                         />
