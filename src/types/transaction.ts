@@ -1,42 +1,32 @@
 import type { Delivery } from "@/types/delivery";
 import type { Timestamp } from "firebase/firestore";
+import type { Address } from "@/types/user";
 
 export interface Transaction {
-    transaction_id: string;
-    seller_id: string;
-    is_donation: boolean;
-    receiver_id: string;
-    status:
-        | "pending_confirmation"
-        | "pending_pickup"
-        | "assigned_pickup"
-        | "picked_up"
-        | "completed"
-        | "rejected";
+  seller_id: string;
+  is_donation: boolean;
+  receiver_id: string;
+  status:
+    | "pending_confirmation"
+    | "pending_pickup"
+    | "assigned_pickup"
+    | "picked_up"
+    | "completed"
+    | "rejected";
 
-    status_notes?: string;
+  status_notes?: string;
 
-    pick_up_location: string;
-    delivery_details?: Delivery;
+  pick_up_location: Address;
+  delivery_details?: Delivery;
 
-    submitted_at: Timestamp;
-    assigned_at?: Timestamp;
-    picked_up_at?: Timestamp;
-    completed_at?: Timestamp;
+  submitted_at: Timestamp;
+  assigned_at?: Timestamp;
+  picked_up_at?: Timestamp;
+  completed_at?: Timestamp;
 
-    transaction_items: TransactionItem[];
-}
-
-export interface TransactionItem {
-    item_id: string;
-    status:
-        | "pending"
-        | "confirmed"
-        | "rejected"
-        | "completed"
-        | "stored"
-        | "donated";
-    weight: number;
-    price?: number;
-    images?: string[];
+  item_id: string;
+  weight: number;
+  curr_buyer_price?: number;
+  customer_price?: number;
+  images?: string[];
 }
