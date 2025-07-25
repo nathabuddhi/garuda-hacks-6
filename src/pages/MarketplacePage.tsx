@@ -39,7 +39,6 @@ export default function MarketplacePage() {
               <MainItemCard key={i.id} item={i} />
             ))}
           </div>
-          <Footer />
         </div>
       </>
     );

@@ -248,7 +248,6 @@ export default function LandingPage() {
           </CardContent>
         </Card>
       </div>
-      <Footer />
     </div>
   )
 }

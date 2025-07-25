@@ -190,7 +190,7 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-[#FCF2E1] py-6 sm:py-8 lg:py-12">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
-        <div className="flex justify-between items-center mb-6 sm:mb-8">
+        <div className="flex justify-between items-center mb-6 sm:mb-8 mt-15">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#525837]">Profile Settings</h1>
 
           <Button

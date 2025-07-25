@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { CheckCircle, ArrowRight, Inbox, Loader2 } from "lucide-react"
 import { useAuthUser } from "@/lib/utils"
-import Footer from "@/components/Footer"
 
 interface WasteDelivery {
   id: string
@@ -230,7 +229,7 @@ export default function DashboardPage() {
                     </div>
 
                     {index < deliverySteps.length - 1 && (
-                      <div className="hidden sm:block w-8 lg:w-16 h-0.5 bg-white/30 mx-2" />
+                      <div className="hidden sm:block w-8 lg:w-16 h-0.5 bg-white/30 mx-2 ml-10 mb-5" />
                     )}
                   </div>
                 ))}
@@ -394,25 +393,24 @@ export default function DashboardPage() {
   return (
     <>
         <div className="min-h-screen bg-[#FCF2E1] py-6 sm:py-8 lg:py-12">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-            <div className="text-center mb-4 lg:mb-6">
-            <p className="text-lg sm:text-xl text-[#7E8257] font-medium mt-20">
-                Welcome back, {userProfile.username || "User"}! 👋
-            </p>
-            </div>
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+              <div className="text-center mb-4 lg:mb-6">
+              <p className="text-lg sm:text-xl text-[#7E8257] font-medium mt-20">
+                  Welcome back, {userProfile.username || "User"}! 👋
+              </p>
+              </div>
 
-            <div className="text-center mb-8 lg:mb-12">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-[#525837] leading-tight">
-                Ready to turn yesterday's waste into
-                <br className="hidden sm:block" />
-                <span className="inline-block mt-2">tomorrow's good?</span>
-            </h1>
-            </div>
+              <div className="text-center mb-8 lg:mb-12">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-[#525837] leading-tight">
+                  Ready to turn yesterday's waste into
+                  <br className="hidden sm:block" />
+                  <span className="inline-block mt-2">tomorrow's good?</span>
+              </h1>
+              </div>
 
-            {userProfile.role === "seller" ? <SellerDashboard /> : <BuyerDashboard />}
+              {userProfile.role === "seller" ? <SellerDashboard /> : <BuyerDashboard />}
+          </div>
         </div>
-        </div>
-        <Footer/>
     </>
   )
 }
