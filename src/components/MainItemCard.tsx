@@ -4,13 +4,14 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useAuthUser } from "@/lib/utils";
 import { Switch } from "@/components/ui/switch";
-import { getBuyerItemDetails, updateBuyerItem } from "@/handlers/item";
+import { fetchActiveBuyers, getBuyerItemDetails, updateBuyerItem } from "@/handlers/item";
 import { Button } from "@/components/ui/button";
 import { Edit } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { toast } from "sonner";
+import { useJsApiLoader } from "@react-google-maps/api";
 
 export default function MainItemCard({ item }: { item: Item }) {
   const navigate = useNavigate();
@@ -20,26 +21,94 @@ export default function MainItemCard({ item }: { item: Item }) {
   });
   const [buyerItem, setBuyerItem] = useState<BuyerItem | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [activeBuyers, setActiveBuyers] = useState<any[]>([]);
+
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_KEY,
+    libraries: ["places"],
+  });
 
   useEffect(() => {
-    // TODO: setPrice using function
-    setPrice(-1);
+    setPrice(0);
 
     async function fetchBuyerItem() {
       if (!item || !userProfile?.uid || userProfile?.role !== "buyer") return;
 
       try {
-        const buyerItem = await getBuyerItemDetails(item.id, userProfile?.uid);
+        const buyerItem: BuyerItem | null = await getBuyerItemDetails(item.id, userProfile?.uid);
         setBuyerItem(buyerItem);
-        if (buyerItem) {
-          setPrice(buyerItem.price);
-        }
+        // if (buyerItem) {
+        //   setPrice(buyerItem.price);
+        // }
       } catch (error) {
         console.error("Error fetching buyer item:", error);
       }
     }
 
+    async function fetchAndProcessActiveBuyers() {
+      if (!item?.id || !userProfile) return;
+
+      try {
+        const buyers = await fetchActiveBuyers(item.id);
+        setActiveBuyers(buyers);
+        console.log("Active buyers:", buyers);
+
+        const userLat = userProfile.addresses![0].geo_location.lat;
+        const userLon = userProfile.addresses![0].geo_location.long;
+        const origin = `${userLat},${userLon}`; 
+
+        const destinations = buyers
+          .filter(buyer => buyer.addresses[0].geo_location)
+          .map(buyer => `${buyer.addresses[0].geo_location.lat},${buyer.addresses[0].geo_location.long}`);
+
+        if (destinations.length === 0) return;
+
+        const service = new google.maps.DistanceMatrixService();
+        service.getDistanceMatrix(
+          {
+            origins: [origin],
+            destinations: destinations,
+            travelMode: google.maps.TravelMode.DRIVING,
+            avoidTolls: true,
+            avoidHighways: true,
+          },
+          async (response, status) => {
+            if (status === "OK" && response!.rows.length) {
+              const results = response!.rows[0].elements;
+              let shortestDistance = Infinity;
+              let closestBuyerIndex = -1;
+              
+              results.forEach((element, index) => {
+                if (element.status === "OK") {
+                  const distance = element.distance.value / 1000; // Convert meters to kilometers
+                  if (distance < shortestDistance) {
+                    shortestDistance = distance;
+                    closestBuyerIndex = index;
+                  }
+                }
+              });
+
+              if (closestBuyerIndex !== -1) {
+                const closestBuyer = buyers[closestBuyerIndex];
+                const buyerItem = await getBuyerItemDetails(item.id, closestBuyer.uid); // Assuming uid is available
+                setBuyerItem(buyerItem);
+                if (buyerItem) {
+                  setPrice(buyerItem.price * 0.8);
+                }
+                console.log("Closest buyer distance:", shortestDistance, "km");
+              }
+            } else {
+              console.error("Distance Matrix request failed:", status);
+            }
+          }
+        );
+      } catch (error) {
+        console.error("Error processing active buyers:", error);
+      }
+    }
+
     fetchBuyerItem();
+    fetchAndProcessActiveBuyers();
   }, [item, userProfile]);
 
   async function handleAcceptingToggle(checked: boolean) {

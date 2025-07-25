@@ -5,8 +5,10 @@ import {
   doc,
   getDoc,
   getDocs,
+  query,
   setDoc,
   Timestamp,
+  where,
 } from "firebase/firestore";
 
 export const getBaseItems = async (): Promise<Item[]> => {
@@ -77,5 +79,27 @@ export const updateBuyerItem = async (
   } catch (error) {
     console.error("Error updating buyer item:", error);
     throw new Error("Failed to update buyer item");
+  }
+};
+
+export const fetchActiveBuyers = async (itemId: string) => {
+  try {
+    const usersSnapshot = await getDocs(collection(db, "users"));
+    const activeBuyers = [];
+
+    for (const userDoc of usersSnapshot.docs) {
+      const userData = userDoc.data();
+      if (userData.role === "buyer") {
+        const itemsRef = collection(db, "users", userDoc.id, "items");
+        const itemsSnapshot = await getDocs(query(itemsRef, where("item_id", "==", itemId), where("active", "==", true)));
+        if (!itemsSnapshot.empty) {
+          activeBuyers.push(userData);
+        }
+      }
+    }
+    return activeBuyers;
+  } catch (error) {
+    console.error("Error fetching active buyers:", error);
+    throw new Error("Failed to fetch active buyers");
   }
 };
