@@ -13,8 +13,7 @@ export interface Item {
 
 export interface BuyerItem {
   item_id: string;
-  buyer_id: string;
-  price_per_kg: number;
+  price: number;
   active: boolean;
   updated_at: Timestamp;
 }
