@@ -1,4 +1,3 @@
-// UPDATED: Complete landing page redesign with new colors, fonts, and responsive design
 import { LogoWithText } from "@/components/SmallComponents"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -16,11 +15,9 @@ export default function LandingPage() {
 
   useEffect(() => {
     if (!loading && user) {
-      window.location.href = ("/dashboard"); // redirect if logged in
+      window.location.href = ("/dashboard");
     }
   }, [user, loading]);
-
-  if (loading) return <p>Loading...</p>;
 
   return (
     <div className="bg-gray-50">
@@ -47,7 +44,7 @@ export default function LandingPage() {
             className="font-semibold text-lg sm:text-xl py-4 px-8 bg-[#F1E6D0] hover:bg-[#E5D9C3] text-[#525837] rounded-full"
             asChild
           >
-            <Link to={"/register"}>Join now</Link>
+            <Link to={"/login"}>Join now</Link>
           </Button>
         </div>
       </div>

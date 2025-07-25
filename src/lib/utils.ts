@@ -18,10 +18,6 @@ export function useAuthUser(options?: { redirectIfNoUser?: boolean }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading && !user && options?.redirectIfNoUser) {
-      navigate("/login");
-    }
-
     if (!loading && user) {
       (async () => {
         const data = await getUserData(user.uid);

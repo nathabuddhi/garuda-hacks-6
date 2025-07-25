@@ -23,8 +23,8 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/item/:id" element={<ItemDetailPage />} />
           <Route path="*" element={<Navigate to={"/"} replace />} />
         </Route>
-        <Route path="login" element={<LoginPage />} />
-        <Route path="register" element={<RegisterPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>

@@ -19,6 +19,14 @@ export default function ItemDetailPage() {
   const { user, loading } = useAuthUser({
     redirectIfNoUser: true,
   });
+
+  useEffect(() => {
+    if (!loading && !user) {
+      window.location.href = ("/");
+    }
+  }, [user, loading]);
+
+
   const [item, setItem] = useState<Item | null>(null);
   const navigate = useNavigate();
   const params = useParams();
