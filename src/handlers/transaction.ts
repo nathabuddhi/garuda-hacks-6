@@ -1,9 +1,18 @@
-import { db } from "@/lib/firebase";
 import type { BuyerItem } from "@/types/item";
-import type { Transaction } from "@/types/transaction";
 import type { User } from "@/types/user";
 import type { Response } from "@/types/util";
-import { doc, getDoc, setDoc, Timestamp } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  Timestamp,
+  collection,
+  onSnapshot,
+  query,
+  where,
+} from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import type { Transaction } from "@/types/transaction";
 
 export const createNewTransaction = async (
   seller_id: string,
@@ -61,19 +70,50 @@ export const createNewTransaction = async (
       submitted_at: Timestamp.now(),
       item_id: item_id,
       weight: quantity,
+      curr_buyer_price: curr_buyer_item.price * 0.8,
     };
 
-    await setDoc(doc(db, "transactions"), newTransaction);
+    const docRef = doc(collection(db, "transactions"));
+    const transactionWithId = { ...newTransaction, id: docRef.id };
+    await setDoc(docRef, transactionWithId);
 
     return {
       success: true,
-      message: "Transaction created successfully",
+      message: "Transaction created successfully.",
       data: newTransaction as Transaction,
     };
-  } catch {
+  } catch (error) {
+    console.log(error);
     return {
       success: false,
-      message: "Failed to create new transaction",
+      message: error instanceof Error ? error.message : "Unknown error",
     };
   }
+};
+
+export const listenToTransactionsByUserId = (
+  user_id: string,
+  role: string,
+  onData: (transactions: Transaction[]) => void,
+  onError?: (error: any) => void
+) => {
+  const q = query(
+    collection(db, "transactions"),
+    where(role === "buyer" ? "receiver_id" : "seller_id", "==", user_id)
+  );
+
+  return onSnapshot(
+    q,
+    (snapshot) => {
+      const transactions: Transaction[] = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...(doc.data() as Omit<Transaction, "id">),
+      }));
+      onData(transactions);
+    },
+    (error) => {
+      console.error("Error listening to transactions:", error);
+      onError?.(error);
+    }
+  );
 };

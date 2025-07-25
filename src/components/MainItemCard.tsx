@@ -4,7 +4,11 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useAuthUser } from "@/lib/utils";
 import { Switch } from "@/components/ui/switch";
-import { fetchActiveBuyers, getBuyerItemDetails, updateBuyerItem } from "@/handlers/item";
+import {
+  fetchActiveBuyers,
+  getBuyerItemDetails,
+  updateBuyerItem,
+} from "@/handlers/item";
 import { Button } from "@/components/ui/button";
 import { Edit } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
@@ -21,7 +25,7 @@ export default function MainItemCard({ item }: { item: Item }) {
   });
   const [buyerItem, setBuyerItem] = useState<BuyerItem | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [activeBuyers, setActiveBuyers] = useState<any[]>([]);
+  const [closestBuyerId, setClosestBuyerId] = useState<string>("");
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_KEY,
@@ -35,11 +39,11 @@ export default function MainItemCard({ item }: { item: Item }) {
       if (!item || !userProfile?.uid || userProfile?.role !== "buyer") return;
 
       try {
-        const buyerItem: BuyerItem | null = await getBuyerItemDetails(item.id, userProfile?.uid);
+        const buyerItem: BuyerItem | null = await getBuyerItemDetails(
+          item.id,
+          userProfile?.uid
+        );
         setBuyerItem(buyerItem);
-        // if (buyerItem) {
-        //   setPrice(buyerItem.price);
-        // }
       } catch (error) {
         console.error("Error fetching buyer item:", error);
       }
@@ -50,16 +54,17 @@ export default function MainItemCard({ item }: { item: Item }) {
 
       try {
         const buyers = await fetchActiveBuyers(item.id);
-        setActiveBuyers(buyers);
-        console.log("Active buyers:", buyers);
 
         const userLat = userProfile.addresses![0].geo_location.lat;
         const userLon = userProfile.addresses![0].geo_location.long;
-        const origin = `${userLat},${userLon}`; 
+        const origin = `${userLat},${userLon}`;
 
         const destinations = buyers
-          .filter(buyer => buyer.addresses[0].geo_location)
-          .map(buyer => `${buyer.addresses[0].geo_location.lat},${buyer.addresses[0].geo_location.long}`);
+          .filter((buyer) => buyer.addresses[0].geo_location)
+          .map(
+            (buyer) =>
+              `${buyer.addresses[0].geo_location.lat},${buyer.addresses[0].geo_location.long}`
+          );
 
         if (destinations.length === 0) return;
 
@@ -77,10 +82,10 @@ export default function MainItemCard({ item }: { item: Item }) {
               const results = response!.rows[0].elements;
               let shortestDistance = Infinity;
               let closestBuyerIndex = -1;
-              
+
               results.forEach((element, index) => {
                 if (element.status === "OK") {
-                  const distance = element.distance.value / 1000; // Convert meters to kilometers
+                  const distance = element.distance.value / 1000;
                   if (distance < shortestDistance) {
                     shortestDistance = distance;
                     closestBuyerIndex = index;
@@ -90,10 +95,14 @@ export default function MainItemCard({ item }: { item: Item }) {
 
               if (closestBuyerIndex !== -1) {
                 const closestBuyer = buyers[closestBuyerIndex];
-                const buyerItem = await getBuyerItemDetails(item.id, closestBuyer.uid); // Assuming uid is available
+                const buyerItem = await getBuyerItemDetails(
+                  item.id,
+                  closestBuyer.uid
+                );
                 setBuyerItem(buyerItem);
                 if (buyerItem) {
                   setPrice(buyerItem.price * 0.8);
+                  setClosestBuyerId(closestBuyer.uid);
                 }
                 console.log("Closest buyer distance:", shortestDistance, "km");
               }
@@ -147,8 +156,12 @@ export default function MainItemCard({ item }: { item: Item }) {
   }
 
   function handleRedirect() {
+    if (price <= 0) {
+      toast.error("Price is loading or there are no active buyers near you.");
+      return;
+    }
     if (userProfile && userProfile.role === "seller") {
-      navigate("/item/" + item.id);
+      navigate("/item", { state: { item, price, closestBuyerId } });
     }
   }
 

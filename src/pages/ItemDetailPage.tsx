@@ -1,6 +1,5 @@
 import { LoadingSpinner } from "@/components/SmallComponents";
 import { Button } from "@/components/ui/button";
-import { getItemDetails } from "@/handlers/item";
 import { createNewTransaction } from "@/handlers/transaction";
 import { useAuthUser } from "@/lib/utils";
 import type { Item } from "@/types/item";
@@ -12,7 +11,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router";
+import { Link, useLocation } from "react-router";
 import { toast } from "sonner";
 
 export default function ItemDetailPage() {
@@ -22,19 +21,17 @@ export default function ItemDetailPage() {
 
   useEffect(() => {
     if (!loading && !user) {
-      window.location.href = ("/");
+      window.location.href = "/";
     }
   }, [user, loading]);
 
-
   const [item, setItem] = useState<Item | null>(null);
-  const navigate = useNavigate();
-  const params = useParams();
   const [price, setPrice] = useState(1);
   const [buyerId, setBuyerId] = useState("");
   const [quantity, setQuantity] = useState(0);
   const [minQuantity, setMinQuantity] = useState(1);
   const [unit, setUnit] = useState("units");
+  const location = useLocation();
 
   useEffect(() => {
     const parseMin = (minString: string) => {
@@ -55,18 +52,10 @@ export default function ItemDetailPage() {
 
   useEffect(() => {
     async function fetchItemDetails() {
-      const id = params.id;
-      if (!id) {
-        navigate("/marketplace");
-        return;
-      }
-
-      const fetchedItem = await getItemDetails(id);
-
-      setItem(fetchedItem);
+      setItem(location.state?.item as Item | null);
+      setPrice(location.state?.price || 0);
+      setBuyerId(location.state?.closestBuyerId || "");
     }
-
-    // TODO: CHECK CLOSEST BUYER AND THE PRICE
 
     if (!loading) {
       fetchItemDetails();
@@ -78,7 +67,7 @@ export default function ItemDetailPage() {
     setQuantity(newQuantity);
   };
 
-  const totalPrice = quantity * 5000;
+  const totalPrice = quantity * price;
 
   async function handleItemSale() {
     if (quantity < minQuantity) {
@@ -99,6 +88,9 @@ export default function ItemDetailPage() {
 
     if (response.success) {
       toast.success("Transaction created successfully!");
+      setTimeout(() => {
+        window.location.href = "/transactions";
+      }, 1000);
     } else {
       toast.error(response.message || "Failed to create transaction.");
     }

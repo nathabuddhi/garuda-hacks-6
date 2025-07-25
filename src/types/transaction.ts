@@ -26,7 +26,7 @@ export interface Transaction {
 
   item_id: string;
   weight: number;
-  curr_buyer_price?: number;
+  curr_buyer_price: number;
   customer_price?: number;
   images?: string[];
 }

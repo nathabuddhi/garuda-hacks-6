@@ -10,6 +10,7 @@ import MarketplacePage from "@/pages/MarketplacePage";
 import ItemDetailPage from "@/pages/ItemDetailPage";
 import DashboardPage from "@/pages/DashboardPage";
 import ProfilePage from "@/pages/ProfilePage";
+import TransactionPage from "@/pages/TransactionPage";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -20,7 +21,8 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/marketplace" element={<MarketplacePage />} />
-          <Route path="/item/:id" element={<ItemDetailPage />} />
+          <Route path="/item" element={<ItemDetailPage />} />
+          <Route path="/transactions" element={<TransactionPage />} />
           <Route path="*" element={<Navigate to={"/"} replace />} />
         </Route>
         <Route path="/login" element={<LoginPage />} />
