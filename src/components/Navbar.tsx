@@ -7,6 +7,13 @@ import { Menu, X } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useAuthUser } from "@/lib/utils";
 
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import { handleSignOut } from "@/handlers/auth";
+
 interface NavbarProps {
   isScrolled: boolean;
 }
@@ -59,7 +66,7 @@ export default function Navbar({ isScrolled }: NavbarProps) {
                     className={`text-main hover:text-main-light rounded-full  ${
                       currPage == "/dashboard"
                         ? "bg-main-light text-main-white hover:bg-main-light hover:text-main-white"
-                        : "hover:bg-main-light/50 hover:text-main-white"
+                        : "hover:bg-main-light/70 hover:text-main-white"
                     }`}
                     onClick={() => navigate("/dashboard")}>
                     Home
@@ -69,7 +76,7 @@ export default function Navbar({ isScrolled }: NavbarProps) {
                     className={`text-main hover:text-main-light rounded-full  ${
                       currPage == "/marketplace"
                         ? "bg-main-light text-main-white hover:bg-main-light hover:text-main-white"
-                        : "hover:bg-main-light/50 hover:text-main-white"
+                        : "hover:bg-main-light/70 hover:text-main-white"
                     }`}
                     onClick={() => navigate("/marketplace")}>
                     Marketplace
@@ -80,7 +87,7 @@ export default function Navbar({ isScrolled }: NavbarProps) {
                       className={`text-main hover:text-main-light rounded-full  ${
                         currPage == "/donate"
                           ? "bg-main-light text-main-white hover:bg-main-light hover:text-main-white"
-                          : "hover:bg-main-light/50 hover:text-main-white"
+                          : "hover:bg-main-light/70 hover:text-main-white"
                       }`}
                       onClick={() => navigate("/donate")}>
                       Donate
@@ -91,21 +98,33 @@ export default function Navbar({ isScrolled }: NavbarProps) {
                     className={`text-main hover:text-main-light rounded-full  ${
                       currPage == "/transactions"
                         ? "bg-main-light text-main-white hover:bg-main-light hover:text-main-white"
-                        : "hover:bg-main-light/50 hover:text-main-white"
+                        : "hover:bg-main-light/70 hover:text-main-white"
                     }`}
                     onClick={() => navigate("/transactions")}>
                     Transactions
                   </Button>
-                  <Button
-                    variant="ghost"
-                    className={`text-main hover:text-main-light rounded-full  ${
-                      currPage == "/profile"
-                        ? "bg-main-light text-main-white hover:bg-main-light hover:text-main-white"
-                        : "hover:bg-main-light/50 hover:text-main-white"
-                    }`}
-                    onClick={() => navigate("/profile")}>
-                    Profile
-                  </Button>
+                  <HoverCard openDelay={100} closeDelay={500}>
+                    <HoverCardTrigger>
+                      <Button
+                        variant="ghost"
+                        className={`text-main hover:text-main-light rounded-full  ${
+                          currPage == "/profile"
+                            ? "bg-main-light text-main-white hover:bg-main-light hover:text-main-white"
+                            : "hover:bg-main-light/70 hover:text-main-white"
+                        }`}
+                        onClick={() => navigate("/profile")}>
+                        Profile
+                      </Button>
+                    </HoverCardTrigger>
+                    <HoverCardContent className="w-auto">
+                      <Button
+                        variant={"destructive"}
+                        className="bg-red-800 hover:bg-red-900"
+                        onClick={handleSignOut}>
+                        Log Out
+                      </Button>
+                    </HoverCardContent>
+                  </HoverCard>
                 </>
               )}
             </div>
@@ -157,7 +176,7 @@ export default function Navbar({ isScrolled }: NavbarProps) {
                       className={`text-main hover:text-main-light rounded-full  ${
                         currPage == "/dashboard"
                           ? "bg-main-light text-main-white hover:bg-main-light hover:text-main-white"
-                          : "hover:bg-main-light/50 hover:text-main-white"
+                          : "hover:bg-main-light/70 hover:text-main-white"
                       }`}
                       onClick={() => navigate("/dashboard")}>
                       Home
@@ -167,7 +186,7 @@ export default function Navbar({ isScrolled }: NavbarProps) {
                       className={`text-main hover:text-main-light rounded-full  ${
                         currPage == "/marketplace"
                           ? "bg-main-light text-main-white hover:bg-main-light hover:text-main-white"
-                          : "hover:bg-main-light/50 hover:text-main-white"
+                          : "hover:bg-main-light/70 hover:text-main-white"
                       }`}
                       onClick={() => navigate("/marketplace")}>
                       Marketplace
@@ -178,7 +197,7 @@ export default function Navbar({ isScrolled }: NavbarProps) {
                         className={`text-main hover:text-main-light rounded-full  ${
                           currPage == "/donate"
                             ? "bg-main-light text-main-white hover:bg-main-light hover:text-main-white"
-                            : "hover:bg-main-light/50 hover:text-main-white"
+                            : "hover:bg-main-light/70 hover:text-main-white"
                         }`}
                         onClick={() => navigate("/donate")}>
                         Donate
@@ -189,7 +208,7 @@ export default function Navbar({ isScrolled }: NavbarProps) {
                       className={`text-main hover:text-main-light rounded-full  ${
                         currPage == "/transactions"
                           ? "bg-main-light text-main-white hover:bg-main-light hover:text-main-white"
-                          : "hover:bg-main-light/50 hover:text-main-white"
+                          : "hover:bg-main-light/70 hover:text-main-white"
                       }`}
                       onClick={() => navigate("/transactions")}>
                       Transactions
@@ -199,7 +218,7 @@ export default function Navbar({ isScrolled }: NavbarProps) {
                       className={`text-main hover:text-main-light rounded-full  ${
                         currPage == "/profile"
                           ? "bg-main-light text-main-white hover:bg-main-light hover:text-main-white"
-                          : "hover:bg-main-light/50 hover:text-main-white"
+                          : "hover:bg-main-light/70 hover:text-main-white"
                       }`}
                       onClick={() => navigate("/profile")}>
                       Profile

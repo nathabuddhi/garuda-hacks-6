@@ -143,7 +143,7 @@ export const signOut = async () => {
   try {
     await firebaseSignOut(auth);
   } catch (error) {
-    console.error("Sign out error:", error);
+    console.error("Firebase Sign out error:", error);
     throw error;
   }
 };
@@ -154,6 +154,16 @@ export const getUserData = async (uid: string): Promise<User | null> => {
     return userDoc.data() as User | null;
   } catch (error) {
     console.error("Get user data error:", error);
+    throw error;
+  }
+};
+
+export const handleSignOut = () => {
+  try {
+    signOut();
+    window.location.href = "/login"; // Redirect to login page after sign out
+  } catch (error) {
+    console.error("Sign out error:", error);
     throw error;
   }
 };
