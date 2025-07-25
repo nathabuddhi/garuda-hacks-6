@@ -51,7 +51,7 @@ export default function LandingPage() {
       <div className="bg-gradient-to-r from-[#525837] to-[#7E8257] py-16 sm:py-24">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <Tabs defaultValue="about" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 lg:grid-cols-4 bg-transparent border border-white/20 rounded-xl overflow-hidden h-auto mb-8">
+            <TabsList className="grid w-full grid-cols-3 bg-transparent border border-white/20 rounded-xl overflow-hidden h-auto mb-8">
               <TabsTrigger
                 value="about"
                 className="cursor-pointer text-white text-sm sm:text-base font-medium py-3 px-2 sm:px-4 data-[state=active]:bg-[#F1E6D0] data-[state=active]:text-[#525837] transition-colors duration-200"

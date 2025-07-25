@@ -32,6 +32,8 @@ export default function MainItemCard({ item }: { item: Item }) {
     libraries: ["places"],
   });
 
+  console.log(isLoaded)
+
   useEffect(() => {
     setPrice(0);
 
