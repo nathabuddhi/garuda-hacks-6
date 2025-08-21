@@ -50,16 +50,16 @@ This initiative promotes **sustainability**, **recycling awareness**, and **econ
 
 - **Vernandio Rivaldo** – Fullstack Developer
 - **Natha Buddhi** – Fullstack Developer
-- **Angelina Oktaviana Putri** - Prototype Creator & Pitch Deck
-- **Matthew Jeremiah Lim** - Prototype Creator & Video Creator
+- **Angelina Oktaviana Putri** - UI/UX Designer & Pitch Deck Creator
+- **Matthew Jeremiah Lim** - UI/UX Designer & Video Editor
 
 ---
 
 ## 📦 Installation
 
 ```bash
-git clone https://github.com/your-org/limbahku.git
-cd limbahku
+git clone https://github.com/nathabuddhi/garuda-hacks-6.git
+cd garuda-hacks-6
 npm install
 npm run dev
 ```
@@ -69,7 +69,7 @@ npm run dev
 ## 💚 Why LimbahKu?
 This project was inspired by the real need to make waste disposal easier, fairer, and greener. Millions of Indonesians (and beyond) hold onto items with untapped value. LimbahKu turns that into something useful, one pickup at a time.
 
->♻️ Sustainability for all.
+>♻️ Turn Your Waste Into Worth.
 
 ---
 
